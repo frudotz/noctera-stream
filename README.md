@@ -113,7 +113,7 @@ The homepage looks for `public/og-image.jpg` (1200×630). Until that file exists
 Generated for every page at build time (`src/routes.tsx`, `src/head.ts`, `src/structured-data.ts`):
 
 - **Title, description, canonical URL** — unique per page; artist descriptions come from each artist's `summary` in `src/data/artists.ts`.
-- **Open Graph and X cards** — `summary_large_image` with the page's own image: the release cover on release pages, the artist photo on artist pages, and on the homepage `public/og-image.jpg` if it exists (1200×630), otherwise the latest cover.
+- **Open Graph and X cards** — compact `summary` card (small thumbnail beside the text) with the page's own image: the release cover on release pages, the artist photo on artist pages, and on the homepage `public/og-image.jpg` if it exists (1200×630), otherwise the latest cover.
 - **JSON-LD** — homepage: `WebSite` + `Organization` (NOCTERA, with its social profiles as `sameAs`); artist pages: `ProfilePage` + `Person` (affiliated with NOCTERA) + `BreadcrumbList`; release pages: `MusicAlbum` (credited artists as `byArtist`, producer contributors as `producer`, streaming links as `sameAs`) with a `MusicRelease` whose `recordLabel` is NOCTERA, + `BreadcrumbList`.
 - **Language** — `<html lang>` follows the page's main content (`tr` on artist pages, whose biographies are Turkish; English interface text is marked `lang="en"`).
 - **sitemap.xml / robots.txt** — the sitemap lists every indexable page and is rebuilt on each build; `robots.txt` allows everything and points to it.

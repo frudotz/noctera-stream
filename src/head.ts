@@ -64,7 +64,9 @@ export function renderHead(meta: PageMeta, image: MetaImage | undefined): string
   for (const [property, content] of meta.og ?? []) tags.push(["property", property, content]);
 
   tags.push(
-    ["name", "twitter:card", image ? "summary_large_image" : "summary"],
+    // "summary" = compact card with a small thumbnail beside the text (not a large image on top).
+    // Discord and Telegram follow this too; og:image itself is unchanged.
+    ["name", "twitter:card", "summary"],
     ["name", "twitter:title", meta.title],
     ["name", "twitter:description", meta.description],
   );
