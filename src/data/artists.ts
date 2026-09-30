@@ -33,6 +33,8 @@ export const artists: Artist[] = [
     ...parseBio(boemBio),
     bioLang: "tr",
     role: "",
+    summary:
+      "BOEM (Muhammed Emin Dönmez), ilk profesyonel projesi “Bi Düş Ver” ile dinleyici karşısına çıkan sanatçı ve söz yazarı. Rap ve Hip-Hop başta olmak üzere üretim yapıyor.",
     image: photo("boem.jpg", 2776, "BOEM — NOCTERA artist"),
     links: {
       instagram: "https://www.instagram.com/boem1n",
@@ -49,6 +51,8 @@ export const artists: Artist[] = [
     ...parseBio(rathBio),
     bioLang: "tr",
     role: "",
+    summary:
+      "RATH (Yusuf Çon); prodüktör, aranjör, söz yazarı ve besteci. BOEM ile “Bi Düş Ver” projesinde söz yazarı, ortak prodüktör ve mix-mastering mühendisi olarak yer aldı.",
     image: photo("rath.jpeg", 3000, "RATH — NOCTERA artist"),
     links: {
       instagram: "https://www.instagram.com/yslhc0/",
@@ -65,6 +69,8 @@ export const artists: Artist[] = [
     ...parseBio(siaraBio),
     bioLang: "tr",
     role: "",
+    summary:
+      "SIARA (Ahmet Safvan Aydın), müzik çalışmalarını NOCTERA ekibiyle sürdüren müzik prodüktörü. “Bi Düş Ver” projesinde ana prodüktör ve idari prodüktör olarak görev aldı.",
     image: photo("siara.jpeg", 3840, "SIARA — NOCTERA producer"),
     links: {
       instagram: ["https://www.instagram.com/ahmetsfvanaydin", "https://www.instagram.com/siaramadethis"],

@@ -4,7 +4,7 @@ import { artistPlatforms } from "./platforms";
 import type { Artist, Release, SocialLink } from "./types";
 
 export { artists, releases };
-export { labelLinks, SITE_URL } from "./label";
+export { GOOGLE_SITE_VERIFICATION, LABEL_DESCRIPTION, labelLinks, SITE_URL } from "./label";
 export { streamingPlatforms } from "./platforms";
 export type * from "./types";
 
@@ -23,6 +23,11 @@ export function artistsOf(release: Release): Artist[] {
 
 export function creditOf(release: Release): string {
   return release.credit ?? artistsOf(release).map((a) => a.name).join(" & ");
+}
+
+/** Alt text for a release's cover, e.g. "BOEM & RATH — Bi Düş Ver cover artwork". */
+export function coverAlt(release: Release): string {
+  return `${creditOf(release)} — ${release.title} cover artwork`;
 }
 
 /** Everyone on a release: credited artists first, then contributors with their role. */

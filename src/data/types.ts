@@ -68,6 +68,8 @@ export type Artist = {
   role: string;
   /** Biography paragraphs, exactly as supplied. */
   bio: string[];
+  /** One or two sentences for search results and link previews (≈140–160 characters), based only on the biography. */
+  summary: string;
   /** BCP 47 language of the biography and legal name. */
   bioLang?: string;
   /** Profile photo in /public. null = none. */

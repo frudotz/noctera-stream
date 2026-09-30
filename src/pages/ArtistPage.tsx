@@ -3,12 +3,15 @@ import { Layout } from "../components/Layout";
 import { ReleaseList } from "../components/ReleaseList";
 import { LinkRows } from "../components/LinkRows";
 import { ResponsiveImage } from "../components/ResponsiveImage";
+import { Breadcrumbs } from "../components/Breadcrumbs";
 
 type Props = { artist: Artist };
 
 export function ArtistPage({ artist }: Props) {
   const { slug, name, realName, bio, bioLang, image } = artist;
   const headingId = `artist-${slug}`;
+
+  const trail = <Breadcrumbs items={[{ label: "NOCTERA", href: "/" }, { label: "Artists" }]} />;
 
   const intro = (
     <div className="intro__body">
@@ -25,25 +28,25 @@ export function ArtistPage({ artist }: Props) {
   );
 
   return (
-    <Layout>
+    <Layout lang={bioLang === "tr" ? "tr" : "en"}>
       {image ? (
         // Same composition as a release: photo in the artwork column, text beside it.
-        <section className="release grid" aria-labelledby={headingId}>
+        <article className="release grid" aria-labelledby={headingId}>
           <div className={image.height && image.height !== image.width ? "artwork artwork--natural" : "artwork"}>
             <ResponsiveImage picture={image} alt={image.alt} />
           </div>
           <div className="release__body">
             <div className="release__intro">
-              <p className="label">Artist</p>
+              {trail}
               {intro}
             </div>
           </div>
-        </section>
+        </article>
       ) : (
-        <section className="intro grid" aria-labelledby={headingId}>
-          <p className="label">Artist</p>
+        <article className="intro grid" aria-labelledby={headingId}>
+          {trail}
           {intro}
-        </section>
+        </article>
       )}
       <ReleaseList heading="Releases" releases={releasesBy(artist)} artist={artist} />
       <LinkRows heading="Follow" owner={name} links={linksOf(artist)} />

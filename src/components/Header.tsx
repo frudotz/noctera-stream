@@ -1,3 +1,5 @@
+import { useUiLang } from "./UiLang";
+
 type Props = {
   /** On the homepage the wordmark is the page's h1; elsewhere it links home. */
   isHome: boolean;
@@ -5,7 +7,7 @@ type Props = {
 
 export function Header({ isHome }: Props) {
   return (
-    <header className="masthead grid">
+    <header className="masthead grid" lang={useUiLang()}>
       {isHome ? (
         <h1 className="wordmark">NOCTERA</h1>
       ) : (

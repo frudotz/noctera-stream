@@ -297,6 +297,26 @@ main {
   overflow-wrap: anywhere;
 }
 
+/* Breadcrumb trail in the eyebrow position (release and artist pages). */
+.breadcrumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.breadcrumbs li + li::before {
+  content: "/";
+  content: "/" / "";
+  margin: 0 0.6em;
+}
+
+.breadcrumbs a {
+  transition: color 180ms var(--ease);
+}
+
+.breadcrumbs a:hover {
+  color: var(--fg);
+}
+
 /* On the homepage the title links to the release page; the link stays quiet until hovered. */
 .release__title-link {
   text-decoration: underline;

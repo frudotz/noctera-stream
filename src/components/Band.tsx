@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useUiLang } from "./UiLang";
 
 type Props = {
   heading: string;
@@ -11,7 +12,7 @@ export function Band({ heading, children }: Props) {
 
   return (
     <section className="band grid" aria-labelledby={id}>
-      <h2 id={id} className="label">{heading}</h2>
+      <h2 id={id} className="label" lang={useUiLang()}>{heading}</h2>
       <div className="band__content">{children}</div>
     </section>
   );

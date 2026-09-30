@@ -108,6 +108,25 @@ The browser picks the smallest file that is sharp enough for the screen. With `c
 
 The homepage looks for `public/og-image.jpg` (1200×630). Until that file exists, the homepage is shared without an image (the build prints a note).
 
+## SEO and metadata
+
+Generated for every page at build time (`src/routes.tsx`, `src/head.ts`, `src/structured-data.ts`):
+
+- **Title, description, canonical URL** — unique per page; artist descriptions come from each artist's `summary` in `src/data/artists.ts`.
+- **Open Graph and X cards** — `summary_large_image` with the page's own image: the release cover on release pages, the artist photo on artist pages, and on the homepage `public/og-image.jpg` if it exists (1200×630), otherwise the latest cover.
+- **JSON-LD** — homepage: `WebSite` + `Organization` (NOCTERA, with its social profiles as `sameAs`); artist pages: `ProfilePage` + `Person` (affiliated with NOCTERA) + `BreadcrumbList`; release pages: `MusicAlbum` (credited artists as `byArtist`, producer contributors as `producer`, streaming links as `sameAs`) with a `MusicRelease` whose `recordLabel` is NOCTERA, + `BreadcrumbList`.
+- **Language** — `<html lang>` follows the page's main content (`tr` on artist pages, whose biographies are Turkish; English interface text is marked `lang="en"`).
+- **sitemap.xml / robots.txt** — the sitemap lists every indexable page and is rebuilt on each build; `robots.txt` allows everything and points to it.
+- **Content-Security-Policy** — sent as a `<meta>` tag (GitHub Pages can't set response headers): same-origin only, no third-party requests.
+
+`npm run build` fails if a page has a missing or duplicate title/description, a wrong canonical URL, not exactly one `<h1>`, an image without `alt`, invalid JSON-LD, or a development URL.
+
+### Google Search Console
+
+1. Add a **Domain** property for `noctera.stream` and verify it with the DNS TXT record Google shows (added in Cloudflare) — nothing in the site needs to change.
+   Alternatively, use a **URL prefix** property with the *HTML tag* method: paste the code into `GOOGLE_SITE_VERIFICATION` in `src/data/label.ts` and push.
+2. Submit `https://noctera.stream/sitemap.xml` under *Sitemaps*.
+
 ## Deployment (GitHub Pages)
 
 Pushing to `main` runs [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), which builds the site and publishes `dist/` to GitHub Pages. In the repository settings, **Pages → Build and deployment → Source** must be set to **GitHub Actions**.

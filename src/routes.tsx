@@ -2,14 +2,20 @@ import type { ReactElement } from "react";
 import {
   artistPath,
   artists,
+  artistsOf,
+  coverAlt,
   creditOf,
+  getLatestRelease,
+  LABEL_DESCRIPTION,
   releasePath,
   releases,
   releasesBy,
   type Artist,
+  type Picture,
   type Release,
 } from "./data";
-import type { PageMeta } from "./head";
+import { absolute, type MetaImage, type PageMeta } from "./head";
+import { artistGraph, homeGraph, releaseGraph } from "./structured-data";
 import { HomePage } from "./pages/HomePage";
 import { ReleasePage } from "./pages/ReleasePage";
 import { ArtistPage } from "./pages/ArtistPage";
@@ -24,66 +30,73 @@ export type Page = {
   scripts: "copy-link"[];
 };
 
+/** Preview image for a picture (its 1200 px share copy when there is one). */
+function metaImage(picture: Picture, alt: string): MetaImage {
+  const file = picture.share ?? picture;
+  return { src: file.src, width: file.width, height: file.height ?? file.width, alt };
+}
+
 function releaseMeta(release: Release): PageMeta {
   const credit = creditOf(release);
-  const image = release.cover?.share ?? release.cover;
+  const title = `${credit} — ${release.title} | NOCTERA`;
+  const lang = "en";
+  const images = release.cover ? [metaImage(release.cover, coverAlt(release))] : [];
 
   return {
-    title: `${credit} — ${release.title} | NOCTERA`,
-    description: `${credit} — ${release.title}. A NOCTERA release.`,
+    title,
+    description: release.latest
+      ? `${credit} — ${release.title}. Listen to the latest NOCTERA release across streaming platforms.`
+      : `${credit} — ${release.title}. Listen to this NOCTERA release across streaming platforms.`,
     path: releasePath(release),
+    lang,
     type: release.type.toLowerCase() === "single" ? "music.song" : "music.album",
-    image: image
-      ? {
-          src: image.src,
-          width: image.width,
-          height: image.width,
-          alt: `Cover artwork for “${release.title}” by ${credit}`,
-        }
-      : undefined,
-    card: "summary",
+    images,
+    og: artistsOf(release).map((artist) => ["music:musician", absolute(artistPath(artist))]),
+    jsonLd: releaseGraph(release, title, lang, images[0]),
   };
 }
 
 function artistMeta(artist: Artist): PageMeta {
+  const title = `${artist.name} | NOCTERA`;
+  // Artist pages are mostly the (Turkish) biography.
+  const lang = artist.bioLang === "tr" ? "tr" : "en";
   const works = releasesBy(artist);
-  // The artist's photo; without one, their most recent artwork.
-  const photo = artist.image && { ...(artist.image.share ?? artist.image), alt: artist.image.alt };
-  const cover = works.find((r) => r.cover)?.cover;
-  const coverImage = cover && { ...(cover.share ?? cover), alt: `Cover artwork for “${works[0].title}” by ${creditOf(works[0])}` };
-  const picked = photo ?? coverImage;
-  const image = picked
-    ? { src: picked.src, width: picked.width, height: picked.height ?? picked.width, alt: picked.alt }
-    : undefined;
-
-  // First sentence of the supplied biography, verbatim.
-  const firstSentence = artist.bio[0]?.split(/(?<=[.!?])\s+/)[0];
+  const cover = works.find((r) => r.cover);
+  const images = artist.image
+    ? [metaImage(artist.image, artist.image.alt)]
+    : cover?.cover
+      ? [metaImage(cover.cover, coverAlt(cover))]
+      : [];
 
   return {
-    title: `${artist.name} — NOCTERA`,
-    description:
-      firstSentence ??
-      (works.length > 0
-        ? `${artist.name} on NOCTERA — ${works.map((r) => r.title).join(", ")}.`
-        : `${artist.name} on NOCTERA.`),
+    title,
+    description: artist.summary || `${artist.name} on NOCTERA.`,
     path: artistPath(artist),
+    lang,
     type: "profile",
-    image,
-    card: "summary",
+    images,
+    jsonLd: artistGraph(artist, title, lang, images[0]),
   };
 }
 
 export function getPages(): Page[] {
+  const latest = getLatestRelease();
+
   return [
     {
       path: "/",
       meta: {
         title: "NOCTERA — Independent Music Label",
-        description: "NOCTERA — independent music, releases and artists.",
+        description: LABEL_DESCRIPTION,
         path: "/",
+        lang: "en",
         type: "website",
-        image: { src: "/og-image.jpg", width: 1200, height: 630, alt: "NOCTERA" },
-        card: "summary_large_image",
+        // A dedicated 1200×630 public/og-image.jpg wins when it exists; until then, the latest cover.
+        images: [
+          { src: "/og-image.jpg", width: 1200, height: 630, alt: "NOCTERA" },
+          ...(latest.cover ? [metaImage(latest.cover, coverAlt(latest))] : []),
+        ],
+        jsonLd: homeGraph(LABEL_DESCRIPTION, "en"),
       },
       element: <HomePage />,
       scripts: [],
@@ -106,8 +119,9 @@ export function getPages(): Page[] {
         title: "Not found — NOCTERA",
         description: "This page does not exist.",
         path: "/404.html",
+        lang: "en",
         type: "website",
-        card: "summary",
+        images: [],
         noindex: true,
       },
       element: <NotFoundPage />,

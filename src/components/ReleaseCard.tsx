@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { creditOf, releasePath, SITE_URL, type Release } from "../data";
 import { Artwork } from "./Artwork";
 import { CopyLink } from "./CopyLink";
@@ -5,7 +6,8 @@ import { PlatformLinks } from "./PlatformLinks";
 
 type Props = {
   release: Release;
-  eyebrow: string;
+  /** Small label above the heading ("Latest release", or a breadcrumb trail). */
+  eyebrow: ReactNode;
   /** h1 on the release's own page, h2 where it's featured (homepage). */
   headingLevel: 1 | 2;
   /** Link the title to the release page (used on the homepage). */
@@ -20,22 +22,23 @@ export function ReleaseCard({ release, eyebrow, headingLevel, linkTitle = false,
   const headingId = `release-${release.slug}`;
 
   return (
-    <section className="release grid" aria-labelledby={headingId}>
+    <article className="release grid" aria-labelledby={headingId}>
       <Artwork cover={cover} title={title} titleLang={titleLang} credit={credit} year={year} />
 
       <div className="release__body">
         <div className="release__intro">
-          <p className="label">{eyebrow}</p>
-          <Heading id={headingId} className="release__heading">
-            <span className="release__artist">{credit}</span>{" "}
-            <span className="release__title" lang={titleLang}>
+          {typeof eyebrow === "string" ? <p className="label">{eyebrow}</p> : eyebrow}
+          {/* The heading is the title alone; the artist credit is its subheading. */}
+          <hgroup className="release__heading">
+            <p className="release__artist">{credit}</p>
+            <Heading id={headingId} className="release__title" lang={titleLang}>
               {linkTitle ? (
                 <a className="release__title-link" href={releasePath(release)}>{title}</a>
               ) : (
                 title
               )}
-            </span>
-          </Heading>
+            </Heading>
+          </hgroup>
           <div className="release__meta">
             <p className="label">
               {type} <span aria-hidden="true">·</span> {year}
@@ -46,6 +49,6 @@ export function ReleaseCard({ release, eyebrow, headingLevel, linkTitle = false,
 
         <PlatformLinks release={release} headingLevel={headingLevel === 1 ? 2 : 3} />
       </div>
-    </section>
+    </article>
   );
 }

@@ -13,7 +13,7 @@ export function Artwork({ cover, title, titleLang, credit, year }: Props) {
   if (cover) {
     return (
       <div className="artwork">
-        <ResponsiveImage picture={cover} alt={`Cover artwork for “${title}” by ${credit}`} />
+        <ResponsiveImage picture={cover} alt={`${credit} — ${title} cover artwork`} />
       </div>
     );
   }
