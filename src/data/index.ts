@@ -25,8 +25,22 @@ export function creditOf(release: Release): string {
   return release.credit ?? artistsOf(release).map((a) => a.name).join(" & ");
 }
 
+/** Everyone on a release: credited artists first, then contributors with their role. */
+export function peopleOf(release: Release): { artist: Artist; role: string }[] {
+  return [
+    ...artistsOf(release).map((artist) => ({ artist, role: "" })),
+    ...(release.contributors ?? []).map(({ artist, role }) => ({ artist: getArtist(artist), role })),
+  ];
+}
+
+/** Releases an artist is credited on or contributed to. */
 export function releasesBy(artist: Artist): Release[] {
-  return releases.filter((r) => r.artists.includes(artist.slug));
+  return releases.filter((r) => peopleOf(r).some((p) => p.artist.slug === artist.slug));
+}
+
+/** The artist's contributor role on a release ("" when they're a credited artist). */
+export function roleOn(release: Release, artist: Artist): string {
+  return release.contributors?.find((c) => c.artist === artist.slug)?.role ?? "";
 }
 
 export function getLatestRelease(): Release {
@@ -41,7 +55,7 @@ export function linksOf(artist: Artist): (SocialLink & { url: string })[] {
   });
 }
 
-/** Fails the build early on data mistakes (duplicate slugs, unknown artists, no releases). */
+/** Fails the build early on data mistakes (duplicate slugs, unknown artists, broken bio files). */
 export function validateData() {
   if (releases.length === 0) throw new Error("releases.ts must contain at least one release");
   if (releases.filter((r) => r.latest).length > 1) throw new Error("Only one release can be marked latest");
@@ -55,5 +69,9 @@ export function validateData() {
       seen.add(s);
     }
   }
-  releases.forEach(artistsOf);
+  releases.forEach(peopleOf);
+
+  for (const artist of artists) {
+    if (!artist.name) throw new Error(`Artist "${artist.slug}" has no name (check its bio file)`);
+  }
 }

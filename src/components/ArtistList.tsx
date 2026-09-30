@@ -2,21 +2,24 @@ import { artistPath, linksOf, type Artist } from "../data";
 import { Arrow } from "./Arrow";
 import { Band } from "./Band";
 
-type Props = { artists: Artist[] };
+type Props = {
+  /** Artists with an optional role (their general role, or their role on a release). */
+  people: { artist: Artist; role: string }[];
+};
 
 /** One line per artist: name (to the artist page), role if known, external profiles. */
-export function ArtistList({ artists }: Props) {
-  if (artists.length === 0) return null;
+export function ArtistList({ people }: Props) {
+  if (people.length === 0) return null;
 
   return (
     <Band heading="Artists">
       <ul className="people">
-        {artists.map((artist) => (
+        {people.map(({ artist, role }) => (
           <li key={artist.slug} className="person">
             <a className="person__name follow__link" href={artistPath(artist)}>
               {artist.name}
             </a>
-            {artist.role && <span className="person__role">{artist.role}</span>}
+            {role && <span className="person__role">{role}</span>}
             <span className="person__links">
               {linksOf(artist).map(({ label, url }) => (
                 <a

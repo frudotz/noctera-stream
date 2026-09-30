@@ -61,7 +61,24 @@ Once there is more than one release, the homepage shows a "Selected releases" li
 
 ### Artists
 
-Edit `src/data/artists.ts`. Each artist has `slug`, `name`, `role`, `bio`, `image` and `links` (Instagram, Spotify, Apple Music, YouTube, SoundCloud, TikTok, X). Leave anything unconfirmed empty — empty fields aren't shown.
+Each artist is an entry in `src/data/artists.ts` plus a biography file in `src/data/bios/<slug>.txt`:
+
+```text
+BOEM                        ← line 1: stage name
+Muhammed Emin Dönmez        ← line 2: legal name
+
+First paragraph…            ← paragraphs separated by blank lines
+
+Second paragraph…
+```
+
+The biography is shown exactly as written in that file (edit the file, not the page). The first sentence becomes the page's description for search and social previews.
+
+Photos go in `public/assets/artists/` — the original plus `-640.webp`, `-1200.webp` and `-1200.jpg` copies with the same base name (e.g. `boem.jpg`, `boem-640.webp`, …); `photo("boem.jpg", 1536, "BOEM — NOCTERA artist")` wires them up. The `-1200.jpg` copy is the social preview.
+
+`links` covers Instagram, Spotify, Apple Music, YouTube, SoundCloud, TikTok and X; `role` is shown next to the name on the homepage. Leave anything unconfirmed empty — empty fields aren't shown.
+
+To credit someone on a release without adding them to the credit line (e.g. a producer), use `contributors` on the release: `contributors: [{ artist: "siara", role: "Main Producer / Executive Producer" }]`. The release then appears on their artist page with that role.
 
 ### NOCTERA's accounts
 

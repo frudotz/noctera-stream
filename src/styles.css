@@ -41,6 +41,7 @@
   --surface: #121213;
   --fg: #f1f1ee;
   --fg-muted: #858585;
+  --fg-soft: #b9b9b5;
   --line: #232324;
   --line-strong: #3a3a3b;
 
@@ -189,6 +190,15 @@ main {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* Non-square photos keep their own proportions. */
+.artwork--natural {
+  aspect-ratio: auto;
+}
+
+.artwork--natural img {
+  height: auto;
 }
 
 .artwork--placeholder {
@@ -511,6 +521,11 @@ a.row:active .row__label {
   color: var(--fg-muted);
 }
 
+.row__meta--role {
+  margin-top: 2px;
+  color: var(--fg-soft);
+}
+
 .row--plain {
   grid-template-columns: minmax(0, 1fr) auto;
 }
@@ -543,9 +558,19 @@ a.row:active .row__label {
   gap: 14px;
 }
 
+.intro__name {
+  margin-top: -4px;
+}
+
+/* Biography: comfortable reading measure, a step softer than headings. */
 .intro__bio {
+  display: grid;
+  gap: 1em;
   max-width: 34rem;
-  color: var(--fg-muted);
+  margin-top: 14px;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--fg-soft);
 }
 
 /* ---------- Colophon ---------- */

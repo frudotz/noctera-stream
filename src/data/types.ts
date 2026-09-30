@@ -4,16 +4,20 @@ export type Image = {
   src: string;
   /** Pixel width of the file. */
   width: number;
+  /** Pixel height; omit for square images. */
+  height?: number;
 };
 
-export type Cover = Image & {
-  /** Square artwork (original file) in /public. */
-  src: string;
-  /** Optional smaller copies of the same image; the browser picks the best fit for the screen. */
+/** An original image in /public plus optional smaller copies of the same picture. */
+export type Picture = Image & {
+  /** Smaller copies of the same image; the browser picks the best fit for the screen. */
   variants?: Image[];
-  /** JPEG copy used as the social-media preview (≈1200×1200). Falls back to `src`. */
+  /** JPEG copy used as the social-media preview (≈1200 px). Falls back to `src`. */
   share?: Image;
 };
+
+/** Square release artwork. */
+export type Cover = Picture;
 
 export type StreamingPlatform =
   | "spotify"
@@ -43,6 +47,8 @@ export type Release = {
   artists: string[];
   /** How the artists are credited, e.g. "BOEM & RATH". Defaults to the names joined with " & ". */
   credit?: string;
+  /** Other roster members who worked on the release (not part of the credit line). */
+  contributors?: { artist: string; role: string }[];
   type: string;
   year: string;
   /** null shows the neutral placeholder. */
@@ -56,11 +62,16 @@ export type Artist = {
   /** URL segment: /artists/<slug>/ */
   slug: string;
   name: string;
+  /** Legal name, shown under the artist name. */
+  realName: string;
   /** e.g. "Artist / Producer". Leave empty unless confirmed. */
   role: string;
-  bio: string;
-  /** Square portrait in /public. null = none. */
-  image: Image | null;
+  /** Biography paragraphs, exactly as supplied. */
+  bio: string[];
+  /** BCP 47 language of the biography and legal name. */
+  bioLang?: string;
+  /** Profile photo in /public. null = none. */
+  image: (Picture & { alt: string }) | null;
   links: Record<ArtistPlatform, Url>;
 };
 

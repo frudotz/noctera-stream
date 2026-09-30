@@ -12,7 +12,7 @@ export function HomePage() {
       {/* Only worth a section once there is more than the featured release. */}
       {releases.length > 1 && <ReleaseList heading="Selected releases" releases={releases} />}
       <SocialLinks links={labelLinks} />
-      <ArtistList artists={artists} />
+      <ArtistList people={artists.map((artist) => ({ artist, role: artist.role }))} />
     </Layout>
   );
 }

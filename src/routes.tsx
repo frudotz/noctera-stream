@@ -47,27 +47,28 @@ function releaseMeta(release: Release): PageMeta {
 
 function artistMeta(artist: Artist): PageMeta {
   const works = releasesBy(artist);
-  // Without a portrait, the artist's most recent artwork is the preview.
+  // The artist's photo; without one, their most recent artwork.
+  const photo = artist.image && { ...(artist.image.share ?? artist.image), alt: artist.image.alt };
   const cover = works.find((r) => r.cover)?.cover;
-  const coverImage = cover?.share ?? cover;
-  const image = artist.image
-    ? { ...artist.image, height: artist.image.width, alt: artist.name }
-    : coverImage && {
-        src: coverImage.src,
-        width: coverImage.width,
-        height: coverImage.width,
-        alt: `Cover artwork for “${works[0].title}” by ${creditOf(works[0])}`,
-      };
+  const coverImage = cover && { ...(cover.share ?? cover), alt: `Cover artwork for “${works[0].title}” by ${creditOf(works[0])}` };
+  const picked = photo ?? coverImage;
+  const image = picked
+    ? { src: picked.src, width: picked.width, height: picked.height ?? picked.width, alt: picked.alt }
+    : undefined;
+
+  // First sentence of the supplied biography, verbatim.
+  const firstSentence = artist.bio[0]?.split(/(?<=[.!?])\s+/)[0];
 
   return {
-    title: `${artist.name} | NOCTERA`,
+    title: `${artist.name} — NOCTERA`,
     description:
-      works.length > 0
+      firstSentence ??
+      (works.length > 0
         ? `${artist.name} on NOCTERA — ${works.map((r) => r.title).join(", ")}.`
-        : `${artist.name} on NOCTERA.`,
+        : `${artist.name} on NOCTERA.`),
     path: artistPath(artist),
     type: "profile",
-    image: image || undefined,
+    image,
     card: "summary",
   };
 }

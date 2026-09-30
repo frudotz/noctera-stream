@@ -1,4 +1,4 @@
-import { artistsOf, type Release } from "../data";
+import { peopleOf, type Release } from "../data";
 import { Layout } from "../components/Layout";
 import { ReleaseCard } from "../components/ReleaseCard";
 import { ArtistList } from "../components/ArtistList";
@@ -14,7 +14,7 @@ export function ReleasePage({ release }: Props) {
         headingLevel={1}
         showCopyLink
       />
-      <ArtistList artists={artistsOf(release)} />
+      <ArtistList people={peopleOf(release)} />
     </Layout>
   );
 }

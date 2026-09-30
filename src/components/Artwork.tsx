@@ -1,4 +1,5 @@
 import type { Cover } from "../data";
+import { ResponsiveImage } from "./ResponsiveImage";
 
 type Props = {
   cover: Cover | null;
@@ -10,22 +11,9 @@ type Props = {
 
 export function Artwork({ cover, title, titleLang, credit, year }: Props) {
   if (cover) {
-    const srcSet = [...(cover.variants ?? []), cover]
-      .map(({ src, width }) => `${src} ${width}w`)
-      .join(", ");
-
     return (
       <div className="artwork">
-        <img
-          src={cover.src}
-          srcSet={srcSet}
-          sizes="(min-width: 820px) min(600px, 100svh - 190px), min(100vw - 40px, 544px)"
-          alt={`Cover artwork for “${title}” by ${credit}`}
-          width={cover.width}
-          height={cover.width}
-          decoding="async"
-          fetchPriority="high"
-        />
+        <ResponsiveImage picture={cover} alt={`Cover artwork for “${title}” by ${credit}`} />
       </div>
     );
   }

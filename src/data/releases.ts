@@ -12,6 +12,7 @@ export const releases: Release[] = [
     titleLang: "tr",
     artists: ["boem", "rath"],
     credit: "BOEM & RATH",
+    contributors: [{ artist: "siara", role: "Main Producer / Executive Producer" }],
     type: "Single",
     year: "2026",
     latest: true,
