@@ -1,0 +1,464 @@
+/* ---------- Fonts (self-hosted, subset: Latin + Latin Extended-A) ---------- */
+
+@font-face {
+  font-family: "Archivo";
+  src: url("/fonts/archivo-latin.woff2") format("woff2");
+  font-weight: 400 600;
+  font-stretch: 100% 125%;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+2013-2014, U+2018-201D, U+2022, U+2026;
+}
+
+@font-face {
+  font-family: "Archivo";
+  src: url("/fonts/archivo-latin-ext.woff2") format("woff2");
+  font-weight: 400 600;
+  font-stretch: 100% 125%;
+  font-display: swap;
+  unicode-range: U+0100-017F;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/fonts/plex-mono-latin.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+2013-2014, U+2022;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/fonts/plex-mono-latin-ext.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0100-017F;
+}
+
+/* ---------- Tokens ---------- */
+
+:root {
+  --bg: #0b0b0c;
+  --surface: #121213;
+  --fg: #f1f1ee;
+  --fg-muted: #858585;
+  --line: #232324;
+  --line-strong: #3a3a3b;
+
+  --sans: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --gutter: 20px;
+  --gap: 20px;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  color-scheme: dark;
+}
+
+/* ---------- Base ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+p,
+ol,
+ul {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img,
+svg {
+  display: block;
+}
+
+::selection {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+:focus-visible {
+  outline: 1px solid var(--fg);
+  outline-offset: 4px;
+}
+
+/* ---------- Layout ---------- */
+
+.page {
+  width: 100%;
+  max-width: calc(34rem + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+/* Every block shares one column system: artwork column | content column. */
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: var(--gap);
+}
+
+/* ---------- Type ---------- */
+
+.label {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.wordmark {
+  font-family: var(--sans);
+  font-stretch: 125%;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  line-height: 1;
+  letter-spacing: 0.32em;
+  /* Letter-spacing adds trailing space after the last letter; pull it back. */
+  margin-right: -0.32em;
+  color: var(--fg);
+}
+
+/* ---------- Masthead ---------- */
+
+.masthead {
+  row-gap: 10px;
+  padding: 28px 0 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+/* ---------- Release ---------- */
+
+.release {
+  row-gap: 28px;
+  padding: 28px 0 48px;
+}
+
+.artwork {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.artwork img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.artwork--placeholder {
+  outline: 1px solid var(--line);
+  outline-offset: -1px;
+  background:
+    radial-gradient(120% 90% at 50% 0%, #19191a 0%, var(--surface) 60%),
+    var(--surface);
+}
+
+.artwork__mark {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.artwork__mark * {
+  vector-effect: non-scaling-stroke;
+}
+
+.artwork__top,
+.artwork__bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 5%;
+  font-family: var(--mono);
+  font-size: clamp(0.5625rem, 1.9vw, 0.6875rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.artwork__top {
+  top: 0;
+}
+
+.artwork__bottom {
+  bottom: 0;
+  flex-direction: column;
+  gap: 0.35em;
+  font-family: var(--sans);
+  font-size: clamp(0.75rem, 3.2vw, 1rem);
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--fg);
+}
+
+.artwork__bottom span:first-child {
+  font-family: var(--mono);
+  font-size: 0.7em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.release__body {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.release__intro {
+  display: grid;
+  gap: 14px;
+}
+
+.release__heading {
+  display: grid;
+  gap: 8px;
+}
+
+.release__artist {
+  font-stretch: 125%;
+  font-weight: 500;
+  font-size: 0.8125rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.release__title {
+  font-weight: 500;
+  font-size: clamp(2.5rem, 12.5vw, 3.75rem);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Platform rows ---------- */
+
+.listen__heading {
+  padding-bottom: 12px;
+}
+
+.rows {
+  border-top: 1px solid var(--line);
+}
+
+.rows > li {
+  border-bottom: 1px solid var(--line);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr) auto;
+  align-items: center;
+  min-height: 52px;
+  padding: 14px 0;
+  font-size: 1.0625rem;
+  line-height: 1.2;
+  transition: color 180ms var(--ease), opacity 180ms var(--ease);
+}
+
+.row__index,
+.row__status {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.row__label {
+  transition: transform 220ms var(--ease);
+}
+
+.arrow {
+  color: var(--fg-muted);
+  transition: transform 220ms var(--ease), color 180ms var(--ease);
+}
+
+.row--pending .row__label {
+  color: var(--fg-muted);
+}
+
+a.row:focus-visible {
+  outline-offset: -1px;
+}
+
+a.row:active .row__label {
+  transform: translateX(4px);
+}
+
+@media (hover: hover) {
+  /* Hovering one platform quietly recedes the rest. */
+  .rows:has(a.row:hover) a.row:not(:hover) {
+    opacity: 0.45;
+  }
+
+  a.row:hover .row__label {
+    transform: translateX(4px);
+  }
+
+  a.row:hover .arrow {
+    color: var(--fg);
+    transform: translate(2px, -2px);
+  }
+}
+
+/* ---------- Follow ---------- */
+
+.follow {
+  row-gap: 14px;
+  padding: 24px 0 28px;
+  border-top: 1px solid var(--line);
+}
+
+.follow__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+}
+
+.follow__link {
+  display: inline-block;
+  padding: 2px 0;
+  font-size: 0.9375rem;
+  background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 1px;
+  transition: background-size 260ms var(--ease);
+}
+
+.follow__link:hover {
+  background-size: 100% 1px;
+}
+
+/* ---------- Colophon ---------- */
+
+.colophon {
+  row-gap: 6px;
+  padding: 22px 0 28px;
+  border-top: 1px solid var(--line);
+}
+
+/* ---------- Wide screens: two columns, same grid for every block ---------- */
+
+@media (min-width: 820px) {
+  :root {
+    --gutter: 40px;
+    --gap: 56px;
+  }
+
+  .page {
+    max-width: calc(80rem + 2 * var(--gutter));
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: baseline;
+  }
+
+  .masthead {
+    padding: 36px 0 30px;
+  }
+
+  .wordmark {
+    font-size: 1rem;
+  }
+
+  .release {
+    align-items: stretch;
+    padding: 40px 0 72px;
+  }
+
+  /* Keep the whole cover in view on short laptop screens. */
+  .artwork {
+    width: min(100%, calc(100svh - 190px));
+    min-width: 320px;
+    justify-self: start;
+    align-self: start;
+  }
+
+  .release__body {
+    justify-content: space-between;
+    gap: 56px;
+    max-width: 34rem;
+  }
+
+  .release__title {
+    font-size: clamp(3rem, 5.4vw, 5.25rem);
+  }
+
+  .follow,
+  .colophon {
+    padding: 28px 0;
+  }
+
+  .follow__list {
+    gap: 10px 28px;
+  }
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --gap: 80px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+}
