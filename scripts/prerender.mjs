@@ -39,9 +39,14 @@ await writeFile(indexFile, html);
 await copyFile(new URL("CNAME", root), new URL("CNAME", dist));
 await rm(ssrDir, { recursive: true, force: true });
 
-// Verify every root-relative src/href points at a file in dist/.
-const missing = [...html.matchAll(/(?:src|href)="(\/[^"]*)"/g)]
-  .map((m) => m[1].split(/[?#]/)[0])
+// Verify every root-relative src/href/srcset URL points at a file in dist/.
+const refs = [
+  ...[...html.matchAll(/(?:src|href)="(\/[^"]*)"/g)].map((m) => m[1]),
+  ...[...html.matchAll(/srcSet="([^"]*)"/gi)].flatMap((m) => m[1].split(",").map((c) => c.trim().split(/\s+/)[0])),
+];
+const missing = refs
+  .filter((path) => path.startsWith("/"))
+  .map((path) => path.split(/[?#]/)[0])
   .filter((path) => path !== "/" && !existsSync(fileURLToPath(new URL("." + path, dist))));
 
 if (missing.length > 0) {

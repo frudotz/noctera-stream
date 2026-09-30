@@ -23,12 +23,12 @@ Everything lives in [`src/config.ts`](src/config.ts). Edit `latestRelease`:
 
 ```ts
 export const latestRelease: Release = {
-  artist: "BOEM",
+  artist: "BOEM & RATH",
   title: "Bi Düş Ver",
   titleLang: "tr",              // language of the title, for screen readers
   type: "Single",
   year: "2026",
-  cover: "/assets/cover.jpg",   // or null for the neutral placeholder
+  cover: { src: "/assets/bi-dus-ver-cover.png", width: 2508, variants: [/* … */] },
   links: {
     spotify: "https://open.spotify.com/...",
     appleMusic: null,           // not out yet → listed as "Soon"
@@ -41,14 +41,26 @@ Values still set to `PLACEHOLDER` are unpublished: a platform without a URL is s
 
 ## Social links
 
-Edit `socialLinks` in `src/config.ts`. Replace `PLACEHOLDER` with the profile URL; add, remove or reorder entries freely.
+Edit `socialLinks` (NOCTERA's accounts, shown under "Follow") and `artistLinks` (the release's artists, shown under "Artists") in `src/config.ts`. Replace `PLACEHOLDER` with the profile URL; add, remove or reorder entries freely.
 
 ## Artwork
 
-1. Put a square image in `public/assets/`, e.g. `public/assets/cover.jpg` — 1200×1200 JPEG, ideally under 250 KB.
-2. Set `cover: "/assets/cover.jpg"` in `src/config.ts`.
+1. Put the original square artwork in `public/assets/`, with a URL-safe file name (e.g. `public/assets/new-single-cover.png`).
+2. Optionally add smaller copies of the same image (e.g. 640 px and 1200 px WebP) so phones don't download the full-size original.
+3. Update `cover` in `src/config.ts`:
 
-Until then a CSS/SVG placeholder is shown.
+   ```ts
+   cover: {
+     src: "/assets/new-single-cover.png",
+     width: 3000, // pixel width of the original
+     variants: [
+       { src: "/assets/new-single-cover-640.webp", width: 640 },
+       { src: "/assets/new-single-cover-1200.webp", width: 1200 },
+     ],
+   },
+   ```
+
+The browser picks the smallest file that is sharp enough for the screen. With `cover: null` a neutral CSS/SVG placeholder is shown.
 
 ## Social preview (Open Graph)
 

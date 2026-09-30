@@ -6,13 +6,19 @@ export function Artwork({ release }: Props) {
   const { artist, title, titleLang, year, cover } = release;
 
   if (cover) {
+    const srcSet = [...(cover.variants ?? []), cover]
+      .map(({ src, width }) => `${src} ${width}w`)
+      .join(", ");
+
     return (
       <div className="artwork">
         <img
-          src={cover}
+          src={cover.src}
+          srcSet={srcSet}
+          sizes="(min-width: 820px) min(600px, 100svh - 190px), min(100vw - 40px, 544px)"
           alt={`Cover artwork for “${title}” by ${artist}`}
-          width={1200}
-          height={1200}
+          width={cover.width}
+          height={cover.width}
           decoding="async"
           fetchPriority="high"
         />

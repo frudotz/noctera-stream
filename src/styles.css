@@ -383,6 +383,19 @@ a.row:active .row__label {
   background-size: 100% 1px;
 }
 
+.follow__via {
+  margin-left: 0.6em;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.follow + .follow {
+  padding-top: 20px;
+}
+
 /* ---------- Colophon ---------- */
 
 .colophon {

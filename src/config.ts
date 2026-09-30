@@ -18,6 +18,15 @@ export type PlatformKey =
   | "deezer"
   | "amazonMusic";
 
+export type Cover = {
+  /** Original artwork in /public. Square. */
+  src: string;
+  /** Pixel width (= height) of the original. */
+  width: number;
+  /** Optional smaller copies of the same image; the browser picks the best fit for the screen. */
+  variants?: { src: string; width: number }[];
+};
+
 export type Release = {
   artist: string;
   title: string;
@@ -25,31 +34,40 @@ export type Release = {
   titleLang?: string;
   type: string;
   year: string;
-  /** Square artwork in /public, e.g. "/assets/cover.jpg". null shows the neutral placeholder. */
-  cover: string | null;
+  /** null shows the neutral placeholder. */
+  cover: Cover | null;
   links: Record<PlatformKey, Url>;
 };
 
 export type SocialLink = {
   label: string;
   url: Url;
+  /** Where the link goes, when the label alone doesn't say (e.g. an artist's Instagram). */
+  platform?: string;
 };
 
 export const latestRelease: Release = {
-  artist: "BOEM",
+  artist: "BOEM & RATH",
   title: "Bi Düş Ver",
   titleLang: "tr",
   type: "Single",
   year: "2026",
-  cover: null, // e.g. "/assets/cover.jpg"
+  cover: {
+    src: "/assets/bi-dus-ver-cover.png",
+    width: 2508,
+    variants: [
+      { src: "/assets/bi-dus-ver-cover-640.webp", width: 640 },
+      { src: "/assets/bi-dus-ver-cover-1200.webp", width: 1200 },
+    ],
+  },
   links: {
-    spotify: PLACEHOLDER,
-    appleMusic: PLACEHOLDER,
-    youtubeMusic: PLACEHOLDER,
-    youtube: PLACEHOLDER,
+    spotify: "https://open.spotify.com/intl-tr/track/4xlOfyEVBzBrDSyTVtjb3W",
+    appleMusic: "https://music.apple.com/tr/song/bi-d%C3%BC%C5%9F-ver-feat-rath/6817214093",
+    youtubeMusic: "https://music.youtube.com/watch?v=o3SHFFHw1LM",
+    youtube: "https://www.youtube.com/watch?v=o3SHFFHw1LM",
     soundcloud: PLACEHOLDER,
-    deezer: PLACEHOLDER,
-    amazonMusic: PLACEHOLDER,
+    deezer: "https://www.deezer.com/tr/track/4316324352",
+    amazonMusic: "https://music.amazon.com/tracks/B0HLCLVSJR",
   },
 };
 
@@ -64,10 +82,17 @@ export const platforms: { key: PlatformKey; label: string }[] = [
   { key: "amazonMusic", label: "Amazon Music" },
 ];
 
+/** NOCTERA's own accounts. */
 export const socialLinks: SocialLink[] = [
-  { label: "Instagram", url: PLACEHOLDER },
+  { label: "Instagram", url: "https://www.instagram.com/noctera.stream" },
   { label: "TikTok", url: PLACEHOLDER },
   { label: "YouTube", url: PLACEHOLDER },
-  { label: "X", url: PLACEHOLDER },
+  { label: "X", url: "https://x.com/nocterastream" },
   { label: "SoundCloud", url: PLACEHOLDER },
+];
+
+/** The artists on the latest release. */
+export const artistLinks: SocialLink[] = [
+  { label: "BOEM", platform: "Instagram", url: "https://www.instagram.com/boem1n" },
+  { label: "RATH", platform: "Instagram", url: "https://www.instagram.com/yslhc0/" },
 ];
