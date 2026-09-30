@@ -277,13 +277,72 @@ main {
   text-transform: uppercase;
 }
 
-.release__title {
+.release__title,
+.display {
   font-weight: 500;
   font-size: clamp(2.5rem, 12.5vw, 3.75rem);
   line-height: 0.95;
   letter-spacing: -0.035em;
   text-wrap: balance;
   overflow-wrap: anywhere;
+}
+
+/* On the homepage the title links to the release page; the link stays quiet until hovered. */
+.release__title-link {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.12em;
+  transition: text-decoration-color 220ms var(--ease);
+}
+
+.release__title-link:hover {
+  text-decoration-color: currentColor;
+}
+
+.release__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px 16px;
+}
+
+/* Copy link: revealed by src/client/copy-link.ts */
+.copy-link__button {
+  margin: 0;
+  padding: 2px 0;
+  border: 0;
+  background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 1px;
+  color: var(--fg-muted);
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 180ms var(--ease), background-size 260ms var(--ease);
+}
+
+.copy-link__button:hover {
+  color: var(--fg);
+  background-size: 100% 1px;
+}
+
+.copy-link__button[hidden] {
+  display: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* ---------- Platform rows ---------- */
@@ -357,9 +416,9 @@ a.row:active .row__label {
   }
 }
 
-/* ---------- Follow ---------- */
+/* ---------- Bands: ruled rows with a label column (Follow, Artists, Releases) ---------- */
 
-.follow {
+.band {
   row-gap: 14px;
   padding: 24px 0 28px;
   border-top: 1px solid var(--line);
@@ -383,8 +442,26 @@ a.row:active .row__label {
   background-size: 100% 1px;
 }
 
-.follow__via {
-  margin-left: 0.6em;
+.band + .band {
+  padding-top: 20px;
+}
+
+/* Artists: name → artist page, role, external profiles */
+
+.people {
+  display: grid;
+  gap: 8px;
+}
+
+.person {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 16px;
+}
+
+.person__role,
+.person__link {
   font-family: var(--mono);
   font-size: 0.6875rem;
   letter-spacing: 0.08em;
@@ -392,8 +469,83 @@ a.row:active .row__label {
   color: var(--fg-muted);
 }
 
-.follow + .follow {
-  padding-top: 20px;
+.person__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-left: auto;
+}
+
+.person__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 180ms var(--ease);
+}
+
+.person__link:hover {
+  color: var(--fg);
+}
+
+@media (hover: hover) {
+  .person__link:hover .arrow {
+    color: var(--fg);
+    transform: translate(2px, -2px);
+  }
+}
+
+/* Release rows (Selected releases, an artist's releases) and plain link rows */
+
+.row__title,
+.row__meta {
+  display: block;
+}
+
+.row__meta {
+  margin-top: 6px;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.row--plain {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+/* Inside a band, the band's own rule is the list's top rule. */
+.band .rows {
+  margin-block: -14px;
+  border-top: 0;
+}
+
+.band .rows > li:last-child {
+  border-bottom: 0;
+}
+
+@media (hover: hover) {
+  a.row--release:hover .arrow {
+    transform: translateX(3px);
+  }
+}
+
+/* ---------- Page intro (artist pages, 404) ---------- */
+
+.intro {
+  row-gap: 18px;
+  padding: 28px 0 48px;
+}
+
+.intro__body {
+  display: grid;
+  gap: 14px;
+}
+
+.intro__bio {
+  max-width: 34rem;
+  color: var(--fg-muted);
 }
 
 /* ---------- Colophon ---------- */
@@ -448,13 +600,22 @@ a.row:active .row__label {
     max-width: 34rem;
   }
 
-  .release__title {
+  .release__title,
+  .display {
     font-size: clamp(3rem, 5.4vw, 5.25rem);
   }
 
-  .follow,
+  .band,
   .colophon {
     padding: 28px 0;
+  }
+
+  .band__content {
+    max-width: 34rem;
+  }
+
+  .intro {
+    padding: 40px 0 72px;
   }
 
   .follow__list {

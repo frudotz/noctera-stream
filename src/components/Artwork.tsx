@@ -1,10 +1,14 @@
-import type { Release } from "../config";
+import type { Cover } from "../data";
 
-type Props = { release: Release };
+type Props = {
+  cover: Cover | null;
+  title: string;
+  titleLang?: string;
+  credit: string;
+  year: string;
+};
 
-export function Artwork({ release }: Props) {
-  const { artist, title, titleLang, year, cover } = release;
-
+export function Artwork({ cover, title, titleLang, credit, year }: Props) {
   if (cover) {
     const srcSet = [...(cover.variants ?? []), cover]
       .map(({ src, width }) => `${src} ${width}w`)
@@ -16,7 +20,7 @@ export function Artwork({ release }: Props) {
           src={cover.src}
           srcSet={srcSet}
           sizes="(min-width: 820px) min(600px, 100svh - 190px), min(100vw - 40px, 544px)"
-          alt={`Cover artwork for “${title}” by ${artist}`}
+          alt={`Cover artwork for “${title}” by ${credit}`}
           width={cover.width}
           height={cover.width}
           decoding="async"
@@ -31,7 +35,7 @@ export function Artwork({ release }: Props) {
     <div
       className="artwork artwork--placeholder"
       role="img"
-      aria-label={`${artist} — ${title}. Artwork coming soon.`}
+      aria-label={`${credit} — ${title}. Artwork coming soon.`}
     >
       <svg className="artwork__mark" viewBox="0 0 100 100" aria-hidden="true">
         <defs>
@@ -47,7 +51,7 @@ export function Artwork({ release }: Props) {
         <span>{year}</span>
       </div>
       <div className="artwork__bottom" aria-hidden="true">
-        <span>{artist}</span>
+        <span>{credit}</span>
         <span lang={titleLang}>{title}</span>
       </div>
     </div>

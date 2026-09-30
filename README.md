@@ -2,7 +2,7 @@
 
 Link page for NOCTERA — independent music label / collective. Used as the profile link on Instagram, TikTok, YouTube, Spotify and other platforms.
 
-Built with Vite, React and TypeScript. At build time the page is prerendered to static HTML with the CSS inlined, so the deployed site ships **no JavaScript**, makes no third-party requests (fonts are self-hosted) and has no analytics or trackers.
+Built with Vite, React and TypeScript. At build time every page is prerendered to static HTML with the CSS inlined. Pages ship **no JavaScript**, except a 0.8 KB "Copy link" script on release pages. The site makes no third-party requests (fonts are self-hosted) and has no analytics or trackers.
 
 ## Development
 
@@ -10,44 +10,68 @@ Requires Node.js 22+.
 
 ```sh
 npm install
-npm run dev        # local dev server
+npm run dev        # local dev server (all pages, e.g. /artists/boem/)
 npm run build      # typecheck + static build into dist/
 npm run preview    # serve dist/ locally
 ```
 
-`npm run build` fails if the page references a local file that doesn't exist (e.g. a missing cover image).
+`npm run build` fails if data is inconsistent (duplicate slugs, a release credits an unknown artist) or if any page references a local file that doesn't exist (e.g. a missing cover image).
 
-## Updating the latest release
+## Pages
 
-Everything lives in [`src/config.ts`](src/config.ts). Edit `latestRelease`:
+Generated from the data on every build — no router, just HTML files:
+
+| URL | Source |
+| --- | --- |
+| `/` | the release marked `latest: true`, NOCTERA's links, all artists |
+| `/releases/<slug>/` | one page per entry in `src/data/releases.ts` |
+| `/artists/<slug>/` | one page per entry in `src/data/artists.ts` |
+| `/404.html`, `/sitemap.xml` | generated |
+
+Each page has its own title, description, canonical URL and Open Graph / X card tags (`src/routes.tsx`). Release pages use the cover artwork as their preview image; artist pages use the artist's image or, without one, their latest cover.
+
+## Content
+
+All content lives in [`src/data/`](src/data/). A `null` link means "not published yet": a streaming platform is then listed as "Soon", and any other link is hidden.
+
+### A new release
+
+Add an entry at the top of `src/data/releases.ts`, move `latest: true` to it, and remove `latest` from the previous one:
 
 ```ts
-export const latestRelease: Release = {
-  artist: "BOEM & RATH",
-  title: "Bi Düş Ver",
-  titleLang: "tr",              // language of the title, for screen readers
+{
+  slug: "new-single",            // → https://noctera.stream/releases/new-single/
+  title: "New Single",
+  titleLang: "tr",               // language of the title, for screen readers
+  artists: ["boem"],             // slugs from artists.ts, in credit order
+  credit: "BOEM",                // optional; defaults to the names joined with " & "
   type: "Single",
   year: "2026",
-  cover: { src: "/assets/bi-dus-ver-cover.png", width: 2508, variants: [/* … */] },
+  latest: true,
+  cover: { /* see Artwork */ },
   links: {
     spotify: "https://open.spotify.com/...",
-    appleMusic: null,           // not out yet → listed as "Soon"
-    // ...
+    appleMusic: null,            // → "Soon"
+    // youtubeMusic, youtube, soundcloud, deezer, amazonMusic
   },
-};
+},
 ```
 
-Values still set to `PLACEHOLDER` are unpublished: a platform without a URL is shown as "Soon"; a social account without a URL is hidden (the whole Follow row is hidden if none are set). To change the order or names of platforms, edit `platforms` in the same file.
+Once there is more than one release, the homepage shows a "Selected releases" list; the release pages and artist pages update automatically.
 
-## Social links
+### Artists
 
-Edit `socialLinks` (NOCTERA's accounts, shown under "Follow") and `artistLinks` (the release's artists, shown under "Artists") in `src/config.ts`. Replace `PLACEHOLDER` with the profile URL; add, remove or reorder entries freely.
+Edit `src/data/artists.ts`. Each artist has `slug`, `name`, `role`, `bio`, `image` and `links` (Instagram, Spotify, Apple Music, YouTube, SoundCloud, TikTok, X). Leave anything unconfirmed empty — empty fields aren't shown.
 
-## Artwork
+### NOCTERA's accounts
+
+Edit `src/data/label.ts` (shown under "Follow" on the homepage).
+
+### Artwork
 
 1. Put the original square artwork in `public/assets/`, with a URL-safe file name (e.g. `public/assets/new-single-cover.png`).
-2. Optionally add smaller copies of the same image (e.g. 640 px and 1200 px WebP) so phones don't download the full-size original.
-3. Update `cover` in `src/config.ts`:
+2. Add smaller copies of the same image: 640 px and 1200 px WebP so phones don't download the original, and a 1200 px JPEG for social previews.
+3. Set `cover` on the release:
 
    ```ts
    cover: {
@@ -57,14 +81,15 @@ Edit `socialLinks` (NOCTERA's accounts, shown under "Follow") and `artistLinks` 
        { src: "/assets/new-single-cover-640.webp", width: 640 },
        { src: "/assets/new-single-cover-1200.webp", width: 1200 },
      ],
+     share: { src: "/assets/new-single-cover-1200.jpg", width: 1200 },
    },
    ```
 
-The browser picks the smallest file that is sharp enough for the screen. With `cover: null` a neutral CSS/SVG placeholder is shown.
+The browser picks the smallest file that is sharp enough for the screen. With `cover: null` a neutral placeholder is shown.
 
-## Social preview (Open Graph)
+### Homepage preview image
 
-`index.html` already points `og:image` / `twitter:image` to `https://noctera.stream/og-image.jpg`. Add a 1200×630 JPEG at `public/og-image.jpg` — the release artwork on the site's dark background works well. Until the file exists, platforms show the link without an image.
+The homepage looks for `public/og-image.jpg` (1200×630). Until that file exists, the homepage is shared without an image (the build prints a note).
 
 ## Deployment (GitHub Pages)
 
@@ -82,7 +107,7 @@ DNS for `noctera.stream`, at the domain registrar:
 | A     | `@`   | `185.199.109.153` |
 | A     | `@`   | `185.199.110.153` |
 | A     | `@`   | `185.199.111.153` |
-| CNAME | `www` | `<github-username>.github.io` |
+| CNAME | `www` | `frudotz.github.io` |
 
 Then in **Settings → Pages**, set the custom domain to `noctera.stream` and enable **Enforce HTTPS** once the certificate is issued.
 

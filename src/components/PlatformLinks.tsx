@@ -1,14 +1,19 @@
-import { platforms, type Release } from "../config";
+import { streamingPlatforms, type Release } from "../data";
 import { Arrow } from "./Arrow";
 
-type Props = { release: Release };
+type Props = {
+  release: Release;
+  headingLevel: 2 | 3;
+};
 
-export function PlatformLinks({ release }: Props) {
+export function PlatformLinks({ release, headingLevel }: Props) {
+  const Heading = headingLevel === 2 ? "h2" : "h3";
+
   return (
     <div className="listen">
-      <h3 className="label listen__heading">Listen</h3>
+      <Heading className="label listen__heading">Listen</Heading>
       <ol className="rows">
-        {platforms.map(({ key, label }, i) => {
+        {streamingPlatforms.map(({ key, label }, i) => {
           const url = release.links[key];
           const index = String(i + 1).padStart(2, "0");
 

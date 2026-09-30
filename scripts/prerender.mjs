@@ -1,56 +1,85 @@
-// Post-build step: turns the Vite build into a fully static page.
-//   1. renders <App /> to HTML (from the SSR bundle in dist-ssr/)
-//   2. inlines the stylesheet and drops the client script — the page needs no JS
-//   3. copies CNAME into dist/ so the custom domain survives deployment
-//   4. fails the build if index.html references a local file that doesn't exist
-import { copyFile, readFile, rm, writeFile } from "node:fs/promises";
+// Post-build step: turns the Vite build into a fully static multi-page site.
+//   1. renders every page (home, releases, artists, 404) from the SSR bundle in dist-ssr/
+//   2. inlines the stylesheet; drops the dev client bundle — pages are plain HTML
+//   3. adds the tiny copy-link script only to pages that use it
+//   4. writes sitemap.xml and copies CNAME so the custom domain survives deployment
+//   5. fails the build if any page references a local file that doesn't exist
+import { copyFile, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 const root = new URL("../", import.meta.url);
 const dist = new URL("dist/", root);
 const ssrDir = new URL("dist-ssr/", root);
-const indexFile = new URL("index.html", dist);
+const inDist = (path) => fileURLToPath(new URL("." + decodeURI(path.split(/[?#]/)[0]), dist));
 
-const { render } = await import(new URL("entry-server.js", ssrDir).href);
-let html = await readFile(indexFile, "utf8");
+const manifest = JSON.parse(await readFile(new URL(".vite/manifest.json", dist), "utf8"));
+const mainEntry = manifest["index.html"];
+const copyLinkEntry = manifest["src/client/copy-link.ts"];
+if (!mainEntry?.css?.length || !copyLinkEntry) throw new Error("Unexpected Vite manifest layout");
 
-if (!html.includes("<!--app-->")) throw new Error("index.html is missing the <!--app--> placeholder");
-html = html.replace("<!--app-->", () => render());
-
-// Inline the stylesheet.
-const cssTag = /<link rel="stylesheet"[^>]*href="\/(assets\/[^"]+\.css)"[^>]*>/;
-const cssMatch = html.match(cssTag);
-if (!cssMatch) throw new Error("Could not find the built stylesheet in index.html");
-const cssFile = new URL(cssMatch[1], dist);
-const css = await readFile(cssFile, "utf8");
-html = html.replace(cssMatch[0], () => `<style>${css.trim()}</style>`);
-await rm(cssFile);
-
-// Remove the client bundle; the prerendered markup is the whole page.
-const scriptTag = /<script type="module"[^>]*src="\/(assets\/[^"]+\.js)"[^>]*><\/script>\s*/;
-const scriptMatch = html.match(scriptTag);
-if (!scriptMatch) throw new Error("Could not find the client script in index.html");
-html = html.replace(scriptMatch[0], "");
-await rm(new URL(scriptMatch[1], dist));
-html = html.replace(/<link rel="modulepreload"[^>]*>\s*/g, "");
-
-await writeFile(indexFile, html);
-await copyFile(new URL("CNAME", root), new URL("CNAME", dist));
-await rm(ssrDir, { recursive: true, force: true });
-
-// Verify every root-relative src/href/srcset URL points at a file in dist/.
-const refs = [
-  ...[...html.matchAll(/(?:src|href)="(\/[^"]*)"/g)].map((m) => m[1]),
-  ...[...html.matchAll(/srcSet="([^"]*)"/gi)].flatMap((m) => m[1].split(",").map((c) => c.trim().split(/\s+/)[0])),
-];
-const missing = refs
-  .filter((path) => path.startsWith("/"))
-  .map((path) => path.split(/[?#]/)[0])
-  .filter((path) => path !== "/" && !existsSync(fileURLToPath(new URL("." + path, dist))));
-
-if (missing.length > 0) {
-  throw new Error(`index.html references missing files:\n  ${missing.join("\n  ")}`);
+// Template: the built index.html minus the dev client bundle, with CSS inlined.
+let template = await readFile(new URL("index.html", dist), "utf8");
+const css = (await Promise.all(mainEntry.css.map((f) => readFile(new URL(f, dist), "utf8")))).join("\n");
+template = template
+  .replace(new RegExp(`<script type="module"[^>]*src="/${mainEntry.file}"[^>]*></script>\\s*`), "")
+  .replace(/<link rel="modulepreload"[^>]*>\s*/g, "")
+  .replace(/<link rel="stylesheet"[^>]*>/, () => `<style>${css.trim()}</style>`);
+if (template.includes(mainEntry.file) || !template.includes("<!--head-->") || !template.includes("<!--app-->")) {
+  throw new Error("index.html template is missing placeholders or still references the client bundle");
 }
 
-console.log("prerender: dist/index.html is static (no client JS), CNAME copied, local assets verified");
+const scriptTags = { "copy-link": `<script type="module" src="/${copyLinkEntry.file}"></script>` };
+
+const { renderPages, SITE_URL } = await import(new URL("entry-server.js", ssrDir).href);
+const pages = renderPages((path) => existsSync(inDist(path)));
+
+const written = [];
+for (const page of pages) {
+  const scripts = page.scripts.map((name) => scriptTags[name]).join("");
+  const html = template
+    .replace("<!--head-->", () => page.head)
+    .replace("<!--app-->", () => page.html)
+    .replace("</body>", () => `${scripts}</body>`);
+
+  const file = page.path.endsWith(".html") ? page.path : `${page.path}index.html`;
+  await mkdir(new URL("." + file.slice(0, file.lastIndexOf("/") + 1), dist), { recursive: true });
+  await writeFile(new URL("." + file, dist), html);
+  written.push({ file, html });
+}
+
+// Every root-relative src/href/srcset URL on every page must exist in dist/.
+const problems = [];
+for (const { file, html } of written) {
+  const refs = [
+    ...[...html.matchAll(/(?:src|href)="(\/[^"]*)"/g)].map((m) => m[1]),
+    ...[...html.matchAll(/srcSet="([^"]*)"/gi)].flatMap((m) => m[1].split(",").map((c) => c.trim().split(/\s+/)[0])),
+  ];
+  for (const ref of refs) {
+    if (!ref.startsWith("/")) continue;
+    const target = ref.endsWith("/") ? `${ref}index.html` : ref;
+    if (!existsSync(inDist(target))) problems.push(`${file} → ${ref}`);
+  }
+}
+
+const sitemap = [
+  '<?xml version="1.0" encoding="UTF-8"?>',
+  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+  ...pages.filter((p) => p.indexable).map((p) => `  <url><loc>${SITE_URL}${p.path}</loc></url>`),
+  "</urlset>",
+  "",
+].join("\n");
+await writeFile(new URL("sitemap.xml", dist), sitemap);
+
+// Clean up: the dev bundle, the separate stylesheet, the manifest and the SSR build.
+await rm(new URL(mainEntry.file, dist));
+for (const f of mainEntry.css) await rm(new URL(f, dist));
+await rm(new URL(".vite/", dist), { recursive: true, force: true });
+await rm(ssrDir, { recursive: true, force: true });
+await copyFile(new URL("CNAME", root), new URL("CNAME", dist));
+
+if (problems.length > 0) {
+  throw new Error(`Pages reference missing files:\n  ${problems.join("\n  ")}`);
+}
+
+console.log(`prerender: ${pages.length} pages written (${pages.map((p) => p.path).join(", ")}); assets verified`);
