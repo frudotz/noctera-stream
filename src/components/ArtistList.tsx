@@ -21,16 +21,17 @@ export function ArtistList({ people }: Props) {
             </a>
             {role && <span className="person__role">{role}</span>}
             <span className="person__links">
-              {linksOf(artist).map(({ label, url }) => (
+              {linksOf(artist).map(({ label, url, handle }) => (
                 <a
                   key={url}
                   className="person__link"
                   href={url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={`${artist.name} on ${label} (opens in a new tab)`}
+                  aria-label={`${artist.name} on ${label}${handle ? ` (@${handle})` : ""} (opens in a new tab)`}
                 >
                   {label}
+                  {handle && <span className="person__handle">@{handle}</span>}
                   <Arrow />
                 </a>
               ))}

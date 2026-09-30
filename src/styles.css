@@ -482,6 +482,7 @@ a.row:active .row__label {
 .person__links {
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 4px 16px;
   margin-left: auto;
 }
@@ -495,6 +496,15 @@ a.row:active .row__label {
 
 .person__link:hover {
   color: var(--fg);
+}
+
+/* Handles keep their real (lowercase) spelling. */
+.person__handle {
+  text-transform: none;
+}
+
+.row__handle {
+  color: var(--fg-muted);
 }
 
 @media (hover: hover) {

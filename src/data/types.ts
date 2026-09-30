@@ -72,10 +72,13 @@ export type Artist = {
   bioLang?: string;
   /** Profile photo in /public. null = none. */
   image: (Picture & { alt: string }) | null;
-  links: Record<ArtistPlatform, Url>;
+  /** One URL per platform, or a list when the artist has several accounts there. */
+  links: Record<ArtistPlatform, Url | string[]>;
 };
 
 export type SocialLink = {
   label: string;
   url: Url;
+  /** Account handle, shown when an artist has several accounts on one platform. */
+  handle?: string;
 };

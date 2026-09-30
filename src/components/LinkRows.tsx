@@ -15,16 +15,19 @@ export function LinkRows({ heading, owner, links }: Props) {
   return (
     <Band heading={heading}>
       <ul className="rows">
-        {links.map(({ label, url }) => (
+        {links.map(({ label, url, handle }) => (
           <li key={url}>
             <a
               className="row row--plain"
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={`${owner} on ${label} (opens in a new tab)`}
+              aria-label={`${owner} on ${label}${handle ? ` (@${handle})` : ""} (opens in a new tab)`}
             >
-              <span className="row__label">{label}</span>
+              <span className="row__label">
+                {label}
+                {handle && <span className="row__handle"> — @{handle}</span>}
+              </span>
               <Arrow />
             </a>
           </li>

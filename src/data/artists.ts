@@ -33,7 +33,7 @@ export const artists: Artist[] = [
     ...parseBio(boemBio),
     bioLang: "tr",
     role: "",
-    image: photo("boem.jpg", 1536, "BOEM — NOCTERA artist"),
+    image: photo("boem.jpg", 2776, "BOEM — NOCTERA artist"),
     links: {
       instagram: "https://www.instagram.com/boem1n",
       spotify: null,
@@ -67,7 +67,7 @@ export const artists: Artist[] = [
     role: "",
     image: photo("siara.jpeg", 3840, "SIARA — NOCTERA producer"),
     links: {
-      instagram: null,
+      instagram: ["https://www.instagram.com/ahmetsfvanaydin", "https://www.instagram.com/siaramadethis"],
       spotify: null,
       appleMusic: null,
       youtube: null,

@@ -47,11 +47,16 @@ export function getLatestRelease(): Release {
   return releases.find((r) => r.latest) ?? releases[0];
 }
 
-/** An artist's published links, in display order. */
+/** An artist's published links, in display order. Several accounts on one platform are told apart by handle. */
 export function linksOf(artist: Artist): (SocialLink & { url: string })[] {
   return artistPlatforms.flatMap(({ key, label }) => {
-    const url = artist.links[key];
-    return url ? [{ label, url }] : [];
+    const value = artist.links[key];
+    const urls = Array.isArray(value) ? value : value ? [value] : [];
+    return urls.map((url) => ({
+      label,
+      url,
+      handle: urls.length > 1 ? new URL(url).pathname.split("/").filter(Boolean)[0] : undefined,
+    }));
   });
 }
 
