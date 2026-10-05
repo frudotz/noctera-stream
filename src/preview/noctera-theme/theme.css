@@ -1,0 +1,1053 @@
+/*
+ * DESIGN PREVIEW — NOCTERA theme (/preview/noctera-theme/ only).
+ *
+ * Loaded only on the preview page, on top of the production stylesheet
+ * (src/styles.css), whose fonts, tokens and reset it reuses. Every class here
+ * is prefixed "nx-" so nothing can leak into the production pages.
+ */
+
+.nx {
+  --nx-shell: 80rem;
+  --nx-hair: rgba(255, 255, 255, 0.08);
+  --nx-glass: rgba(20, 20, 22, 0.52);
+  --nx-glass-line: rgba(255, 255, 255, 0.09);
+  --nx-header-h: 0px;
+
+  min-height: 100svh;
+  overflow-x: clip;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.nx) {
+    scroll-behavior: smooth;
+  }
+}
+
+.nx [id] {
+  scroll-margin-top: calc(var(--nx-header-h) + 8px);
+}
+
+.nx dl,
+.nx dd {
+  margin: 0;
+}
+
+.nx-shell {
+  width: 100%;
+  max-width: calc(var(--nx-shell) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+/* ---------- Type ---------- */
+
+.nx-label {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.nx-label--bright {
+  color: var(--fg);
+}
+
+.nx-wordmark {
+  font-stretch: 125%;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  line-height: 1;
+  letter-spacing: 0.32em;
+  margin-right: -0.32em;
+}
+
+.nx-textlink {
+  background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 100% 1px;
+  background-color: transparent;
+  padding-bottom: 1px;
+  transition: background-size 260ms var(--ease), color 180ms var(--ease);
+}
+
+.nx-textlink:hover {
+  background-size: 0 1px;
+  background-position: 100% 100%;
+}
+
+/* "Release page →", "Artist page →", artist profiles */
+.nx-morelink {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg);
+  background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 1px;
+  transition: background-size 260ms var(--ease), color 180ms var(--ease);
+}
+
+.nx-morelink .arrow {
+  color: currentColor;
+}
+
+.nx-morelink:hover {
+  background-size: 100% 1px;
+}
+
+.nx-morelink--quiet {
+  color: var(--fg-muted);
+}
+
+.nx-morelink--quiet:hover {
+  color: var(--fg);
+}
+
+.nx-handle {
+  text-transform: none;
+}
+
+/* ---------- Skip link + preview notice ---------- */
+
+.nx-skip {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 20;
+  padding: 10px 14px;
+  background: var(--fg);
+  color: var(--bg);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  transform: translateY(-200%);
+}
+
+.nx-skip:focus-visible {
+  transform: none;
+}
+
+.nx-notice {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 18px;
+  padding: 9px var(--gutter);
+  border-bottom: 1px solid var(--line);
+  background: #0e0e0f;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  text-align: center;
+}
+
+.nx-notice a {
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+/* ---------- Header ---------- */
+
+.nx-header {
+  position: relative;
+  z-index: 10;
+  border-bottom: 1px solid var(--nx-hair);
+}
+
+.nx-header__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 24px;
+  padding-block: 20px;
+}
+
+.nx-header__tagline {
+  display: none;
+}
+
+.nx-nav {
+  display: flex;
+  gap: 18px;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.nx-nav a {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  padding: 6px 0;
+  transition: color 180ms var(--ease);
+}
+
+.nx-nav a:hover {
+  color: var(--fg);
+}
+
+/* Wider screens: one sticky glass bar. */
+@media (min-width: 600px) {
+  .nx {
+    --nx-header-h: 64px;
+  }
+
+  .nx-header {
+    position: sticky;
+    top: 0;
+    background: rgba(11, 11, 12, 0.72);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    backdrop-filter: blur(18px) saturate(140%);
+  }
+
+  .nx-header__inner {
+    flex-wrap: nowrap;
+    min-height: var(--nx-header-h);
+    padding-block: 0;
+  }
+
+  .nx-nav {
+    width: auto;
+    gap: 28px;
+  }
+}
+
+@media (min-width: 960px) {
+  .nx-header__tagline {
+    display: block;
+    margin-right: auto;
+    padding-left: 32px;
+    border-left: 1px solid var(--line);
+  }
+}
+
+/* ---------- Tabs (stage + roster): panels share one grid cell and cross-fade ---------- */
+
+.nx-stack {
+  display: grid;
+}
+
+.nx-stack > * {
+  grid-area: 1 / 1;
+}
+
+[data-nx-panel] {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 700ms var(--ease), visibility 0s linear 700ms;
+}
+
+[data-nx-panel][data-active] {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+/* ---------- Featured release (the stage) ---------- */
+
+.nx-stage {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.nx-stage__panel {
+  position: relative;
+  padding: 28px 0 64px;
+}
+
+/* A blurred copy of the cover lights the stage — the only colour on the page comes from the artwork. */
+.nx-atmosphere {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.nx-atmosphere img {
+  position: absolute;
+  inset: -15%;
+  width: 130%;
+  height: 130%;
+  max-width: none;
+  object-fit: cover;
+  filter: blur(72px) saturate(1.15);
+  opacity: 0.6;
+  transform: translateZ(0);
+}
+
+.nx-atmosphere::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(85% 70% at 28% 42%, rgba(11, 11, 12, 0.15) 0%, rgba(11, 11, 12, 0.6) 62%, var(--bg) 100%),
+    linear-gradient(to bottom, rgba(11, 11, 12, 0.3) 0%, transparent 35%, var(--bg) 100%);
+}
+
+.nx-stage__grid {
+  display: grid;
+  gap: 36px;
+}
+
+.nx-cover {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: var(--surface);
+  box-shadow:
+    0 60px 120px -40px rgba(0, 0, 0, 0.9),
+    0 24px 48px -24px rgba(0, 0, 0, 0.7);
+}
+
+.nx-cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  pointer-events: none;
+}
+
+.nx-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nx-cover__caption {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 14px;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.nx-stage__info {
+  display: grid;
+  gap: 30px;
+  align-content: center;
+}
+
+.nx-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.nx-eyebrow__rule {
+  flex: 1;
+  height: 1px;
+  background: var(--line-strong);
+}
+
+.nx-heading {
+  display: grid;
+  gap: 14px;
+}
+
+.nx-credit {
+  font-stretch: 125%;
+  font-weight: 500;
+  font-size: 0.8125rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+}
+
+.nx-title {
+  font-weight: 500;
+  font-size: clamp(3.25rem, 15vw, 5rem);
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.nx-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 20px;
+}
+
+.nx-facts > div {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  padding: 12px 0 14px;
+  border-top: 1px solid var(--nx-hair);
+}
+
+.nx-facts dd {
+  font-size: 0.9375rem;
+  line-height: 1.35;
+}
+
+/* Restrained glass: only here, where the panel actually sits over the lit artwork. */
+.nx-listen {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--nx-glass-line);
+  border-radius: 4px;
+  background: var(--nx-glass);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  backdrop-filter: blur(22px) saturate(140%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .nx-listen,
+  .nx-header {
+    background: var(--surface);
+  }
+}
+
+.nx-listen__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0 2px;
+}
+
+.nx-listen__primary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border-radius: 2px;
+  background: var(--fg);
+  color: var(--bg);
+  transition: background-color 200ms var(--ease);
+}
+
+.nx-listen__primary > span {
+  display: grid;
+  gap: 4px;
+}
+
+.nx-listen__primary-kicker {
+  font-family: var(--mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.nx-listen__primary-label {
+  font-size: 1.375rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.015em;
+}
+
+.nx-listen__primary .arrow {
+  width: 16px;
+  height: 16px;
+  color: currentColor;
+}
+
+.nx-listen__primary:hover {
+  background: #fff;
+}
+
+.nx-listen__primary:focus-visible {
+  outline-offset: 3px;
+}
+
+.nx-listen__soon {
+  padding: 4px 2px;
+  color: var(--fg-soft);
+}
+
+.nx-listen__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 16px;
+}
+
+.nx-listen__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 46px;
+  padding: 12px 2px;
+  border-top: 1px solid var(--nx-hair);
+  font-size: 0.9375rem;
+  line-height: 1.2;
+  transition: color 180ms var(--ease);
+}
+
+.nx-listen__link--pending {
+  color: var(--fg-muted);
+}
+
+a.nx-listen__link:focus-visible {
+  outline-offset: -1px;
+}
+
+@media (hover: hover) {
+  .nx-listen__grid:has(a:hover) a.nx-listen__link:not(:hover) {
+    color: var(--fg-soft);
+  }
+
+  a.nx-listen__link:hover .arrow,
+  .nx-listen__primary:hover .arrow,
+  .nx-follow__link:hover .arrow {
+    color: currentColor;
+    transform: translate(2px, -2px);
+  }
+
+  .nx-morelink:hover .arrow,
+  .nx-index__row:hover .arrow {
+    transform: translateX(3px);
+  }
+}
+
+.nx-stage__more {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Release switcher: only rendered when there is more than one release. */
+.nx-switcher {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  padding-bottom: 40px;
+}
+
+.nx-switcher__list {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.nx-switcher__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 13rem;
+  padding: 8px 14px 8px 8px;
+  border: 1px solid var(--nx-hair);
+  border-radius: 4px;
+  background: rgba(20, 20, 22, 0.4);
+  opacity: 0.55;
+  transition: opacity 200ms var(--ease), border-color 200ms var(--ease);
+}
+
+.nx-switcher__item:hover,
+.nx-switcher__item[data-active] {
+  opacity: 1;
+}
+
+.nx-switcher__item[data-active] {
+  border-color: var(--line-strong);
+}
+
+.nx-switcher__thumb,
+.nx-switcher__blank {
+  display: block;
+  flex: none;
+  width: 56px;
+  height: 56px;
+  background: var(--surface);
+}
+
+.nx-switcher__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nx-switcher__text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.nx-switcher__title {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nx-switcher__credit {
+  font-size: 0.8125rem;
+  color: var(--fg-muted);
+}
+
+/* ---------- Sections ---------- */
+
+.nx-section {
+  padding: 64px 0 72px;
+  border-top: 1px solid var(--nx-hair);
+}
+
+.nx-section__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.nx-section__title {
+  font-weight: 400;
+  font-size: clamp(2.25rem, 9vw, 3.75rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+/* ---------- Catalogue index ---------- */
+
+.nx-index {
+  border-top: 1px solid var(--nx-hair);
+}
+
+.nx-index > li {
+  border-bottom: 1px solid var(--nx-hair);
+}
+
+.nx-index__row {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  grid-template-areas:
+    "thumb main arrow"
+    "thumb meta arrow";
+  align-items: center;
+  column-gap: 16px;
+  row-gap: 8px;
+  padding: 16px 0;
+  transition: background-color 220ms var(--ease);
+}
+
+.nx-index__no {
+  display: none;
+}
+
+.nx-index__thumb {
+  grid-area: thumb;
+  display: block;
+  aspect-ratio: 1 / 1;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.nx-index__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms var(--ease);
+}
+
+.nx-index__main {
+  grid-area: main;
+  display: grid;
+  gap: 6px;
+  align-self: end;
+}
+
+.nx-index__title {
+  font-size: 1.375rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  transition: transform 260ms var(--ease);
+}
+
+.nx-index__credit {
+  font-stretch: 125%;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+}
+
+.nx-index__meta {
+  grid-area: meta;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+  align-self: start;
+}
+
+.nx-index__row > .arrow {
+  grid-area: arrow;
+}
+
+.nx-index__row:focus-visible {
+  outline-offset: -1px;
+}
+
+@media (hover: hover) {
+  .nx-index__row:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+  }
+
+  .nx-index__row:hover .nx-index__title {
+    transform: translateX(4px);
+  }
+
+  .nx-index__row:hover .nx-index__thumb img {
+    transform: scale(1.04);
+  }
+
+  .nx-index__row:hover .arrow {
+    color: var(--fg);
+  }
+}
+
+/* ---------- Artist roster ---------- */
+
+.nx-roster {
+  display: grid;
+  gap: 36px;
+}
+
+.nx-roster__names {
+  border-top: 1px solid var(--nx-hair);
+}
+
+.nx-roster__names > li {
+  border-bottom: 1px solid var(--nx-hair);
+}
+
+.nx-roster__name {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  align-items: baseline;
+  row-gap: 8px;
+  padding: 18px 0 16px;
+  color: var(--fg-muted);
+  transition: color 260ms var(--ease);
+}
+
+.nx-roster__name:hover {
+  color: var(--fg-soft);
+}
+
+.nx-roster__name[data-active] {
+  color: var(--fg);
+}
+
+.nx-roster__name:focus-visible {
+  outline-offset: -1px;
+}
+
+.nx-roster__stage-name {
+  font-size: clamp(2.5rem, 13vw, 4rem);
+  font-weight: 500;
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+}
+
+.nx-roster__real {
+  grid-column: 2;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.nx-roster__panel {
+  display: grid;
+  gap: 24px;
+  align-content: start;
+}
+
+.nx-portrait {
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: 0 40px 100px -40px rgba(0, 0, 0, 0.85);
+}
+
+.nx-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 35%;
+  filter: saturate(0.85) contrast(1.03);
+  transform: scale(1.04);
+  transition: transform 1400ms var(--ease);
+}
+
+[data-active] > .nx-portrait img {
+  transform: none;
+}
+
+.nx-roster__about {
+  display: grid;
+  gap: 16px;
+}
+
+.nx-roster__heading {
+  font-stretch: 125%;
+  font-weight: 500;
+  font-size: 0.8125rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+
+.nx-roster__summary {
+  max-width: 34rem;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--fg-soft);
+}
+
+.nx-roster__works {
+  border-top: 1px solid var(--nx-hair);
+}
+
+.nx-roster__works li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--nx-hair);
+}
+
+.nx-roster__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
+
+/* ---------- Follow ---------- */
+
+.nx-follow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 48px;
+}
+
+.nx-follow__link {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.18em;
+  font-size: clamp(2.5rem, 10vw, 5.5rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.045em;
+  background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 1px;
+  padding-bottom: 6px;
+  transition: background-size 320ms var(--ease);
+}
+
+.nx-follow__link .arrow {
+  width: 0.3em;
+  height: 0.3em;
+  margin-top: 0.12em;
+}
+
+.nx-follow__link:hover {
+  background-size: 100% 1px;
+}
+
+/* ---------- Footer ---------- */
+
+.nx-footer {
+  overflow: hidden;
+  border-top: 1px solid var(--nx-hair);
+}
+
+.nx-footer__mark {
+  padding-top: 48px;
+  font-stretch: 125%;
+  font-weight: 600;
+  font-size: clamp(2.25rem, 13.4vw, 12rem);
+  line-height: 0.8;
+  letter-spacing: 0.04em;
+  margin-right: -0.04em;
+  color: #18181a;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.nx-footer__row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px 24px;
+  padding: 28px 0 32px;
+}
+
+/* ---------- Tablet and up ---------- */
+
+@media (min-width: 720px) {
+  .nx-index__row {
+    grid-template-columns: 3rem 80px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "no thumb main arrow"
+      "no thumb meta arrow";
+    column-gap: 24px;
+  }
+
+  .nx-index__no {
+    display: block;
+    grid-area: no;
+  }
+
+  .nx-index__title {
+    font-size: 1.75rem;
+  }
+
+  .nx-listen {
+    padding: 20px;
+  }
+}
+
+/* ---------- Desktop: cinematic two-column composition ---------- */
+
+@media (min-width: 1024px) {
+  .nx-stage__panel {
+    padding: 64px 0 96px;
+  }
+
+  .nx-stage__grid {
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    align-items: center;
+    gap: clamp(56px, 6vw, 104px);
+  }
+
+  /* Keep the whole cover in view on short laptop screens. */
+  .nx-stage__art {
+    width: min(100%, calc(100svh - 230px), 720px);
+    min-width: 400px;
+  }
+
+  .nx-stage__info {
+    max-width: 36rem;
+  }
+
+  .nx-title {
+    font-size: clamp(4.5rem, 7.4vw, 8rem);
+  }
+
+  .nx-facts {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .nx-section {
+    padding: 112px 0 120px;
+  }
+
+  .nx-section__head {
+    margin-bottom: 48px;
+  }
+
+  .nx-index__row {
+    grid-template-columns: 3rem 96px minmax(0, 1fr) minmax(0, 22rem) auto;
+    grid-template-areas: "no thumb main meta arrow";
+    padding: 20px 0;
+  }
+
+  .nx-index__main,
+  .nx-index__meta {
+    align-self: center;
+  }
+
+  .nx-index__meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .nx-index__title {
+    font-size: 2.25rem;
+  }
+
+  .nx-roster {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(56px, 6vw, 104px);
+    align-items: start;
+  }
+
+  .nx-roster__names {
+    position: sticky;
+    top: calc(var(--nx-header-h) + 32px);
+  }
+
+  .nx-roster__name {
+    grid-template-columns: 3rem minmax(0, 1fr);
+    padding: 24px 0 20px;
+  }
+
+  .nx-roster__stage-name {
+    font-size: clamp(4rem, 7.4vw, 7.5rem);
+  }
+
+}
+
+@media (min-width: 1024px) {
+  /* Landscape crop beside the names so the portrait doesn't tower over the list. */
+  .nx-portrait {
+    aspect-ratio: 4 / 3;
+  }
+
+  .nx-portrait img {
+    object-position: 50% 30%;
+  }
+}
+
+/* ---------- Entrance: one quiet, staggered reveal on load ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .nx-rise {
+    animation: nx-rise 1100ms var(--ease) both;
+  }
+
+  .nx-rise--1 {
+    animation-name: nx-settle;
+    animation-duration: 1400ms;
+  }
+
+  .nx-rise--2 { animation-delay: 140ms; }
+  .nx-rise--3 { animation-delay: 220ms; }
+  .nx-rise--4 { animation-delay: 300ms; }
+  .nx-rise--5 { animation-delay: 380ms; }
+
+  .nx-atmosphere {
+    animation: nx-fade 2200ms var(--ease) both;
+  }
+}
+
+@keyframes nx-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@keyframes nx-settle {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+}
+
+@keyframes nx-fade {
+  from {
+    opacity: 0;
+  }
+}

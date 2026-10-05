@@ -18,7 +18,8 @@ const inDist = (path) => fileURLToPath(new URL("." + decodeURI(path.split(/[?#]/
 const manifest = JSON.parse(await readFile(new URL(".vite/manifest.json", dist), "utf8"));
 const mainEntry = manifest["index.html"];
 const copyLinkEntry = manifest["src/client/copy-link.ts"];
-if (!mainEntry?.css?.length || !copyLinkEntry) throw new Error("Unexpected Vite manifest layout");
+const previewEntry = manifest["src/preview/noctera-theme/client.ts"];
+if (!mainEntry?.css?.length || !copyLinkEntry || !previewEntry?.css?.length) throw new Error("Unexpected Vite manifest layout");
 
 // Template: the built index.html minus the dev client bundle, with CSS inlined.
 let template = await readFile(new URL("index.html", dist), "utf8");
@@ -49,7 +50,14 @@ template = template.replace(
   (tag) => `${tag}\n    <meta http-equiv="Content-Security-Policy" content="${csp}" />`,
 );
 
-const scriptTags = { "copy-link": `<script type="module" src="/${copyLinkEntry.file}"></script>` };
+const scriptTags = {
+  "copy-link": `<script type="module" src="/${copyLinkEntry.file}"></script>`,
+  "preview-theme": `<script type="module" src="/${previewEntry.file}"></script>`,
+};
+// Stylesheets that only some pages load (linked, so the shared inline CSS and its hash stay the same).
+const styleTags = {
+  "preview-theme": previewEntry.css.map((f) => `<link rel="stylesheet" href="/${f}" />`).join("\n    "),
+};
 
 const { renderPages, SITE_URL } = await import(new URL("entry-server.js", ssrDir).href);
 const pages = renderPages((path) => existsSync(inDist(path)));
@@ -57,9 +65,11 @@ const pages = renderPages((path) => existsSync(inDist(path)));
 const written = [];
 for (const page of pages) {
   const scripts = page.scripts.map((name) => scriptTags[name]).join("");
+  const styles = page.scripts.flatMap((name) => styleTags[name] ?? []).join("\n    ");
   const html = template
     .replace(/<html lang="[^"]*">/, `<html lang="${page.lang}">`)
     .replace("<!--head-->", () => page.head)
+    .replace("</head>", () => (styles ? `  ${styles}\n  </head>` : "</head>"))
     .replace("<!--app-->", () => page.html)
     .replace("</body>", () => `${scripts}</body>`);
 
