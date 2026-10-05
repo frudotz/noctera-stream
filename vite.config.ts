@@ -16,6 +16,8 @@ export default defineConfig(({ isSsrBuild }) => ({
           input: {
             index: "index.html",
             "copy-link": "src/client/copy-link.ts",
+            // Design preview only (/preview/noctera-theme/): its script and stylesheet.
+            "preview-theme": "src/preview/noctera-theme/client.ts",
           },
         },
       },

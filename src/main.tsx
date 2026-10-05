@@ -15,3 +15,6 @@ flushSync(() => root.render(<StrictMode>{page.element}</StrictMode>));
 if (import.meta.env.DEV && page.scripts.includes("copy-link")) {
   void import("./client/copy-link");
 }
+if (import.meta.env.DEV && page.scripts.includes("preview-theme")) {
+  void import("./preview/noctera-theme/client");
+}

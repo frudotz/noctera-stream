@@ -20,6 +20,7 @@ import { HomePage } from "./pages/HomePage";
 import { ReleasePage } from "./pages/ReleasePage";
 import { ArtistPage } from "./pages/ArtistPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { PreviewPage } from "./preview/noctera-theme/PreviewPage";
 
 export type Page = {
   /** "/" or "/section/slug/"; written to <path>/index.html. The 404 page uses "/404.html". */
@@ -27,7 +28,7 @@ export type Page = {
   meta: PageMeta;
   element: ReactElement;
   /** Client scripts the page needs; everything else ships as plain HTML. */
-  scripts: "copy-link"[];
+  scripts: ("copy-link" | "preview-theme")[];
 };
 
 /** Preview image for a picture (its 1200 px share copy when there is one). */
@@ -126,6 +127,23 @@ export function getPages(): Page[] {
       },
       element: <NotFoundPage />,
       scripts: [],
+    },
+    // DESIGN PREVIEW of a proposed theme (src/preview/noctera-theme/). Not linked from
+    // the site, noindex, no canonical and left out of the sitemap; delete this entry
+    // and the folder to remove it.
+    {
+      path: "/preview/noctera-theme/",
+      meta: {
+        title: "Theme preview — NOCTERA",
+        description: "Design preview of a proposed NOCTERA theme. Not the live site.",
+        path: "/preview/noctera-theme/",
+        lang: "en",
+        type: "website",
+        images: [],
+        noindex: true,
+      },
+      element: <PreviewPage />,
+      scripts: ["preview-theme"],
     },
   ];
 }
