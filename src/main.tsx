@@ -18,3 +18,6 @@ if (import.meta.env.DEV && page.scripts.includes("copy-link")) {
 if (import.meta.env.DEV && page.scripts.includes("preview-theme")) {
   void import("./preview/noctera-theme/client");
 }
+if (import.meta.env.DEV && page.scripts.includes("preview-bento")) {
+  void import("./preview/noctera-bento/bento.css");
+}

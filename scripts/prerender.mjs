@@ -19,7 +19,10 @@ const manifest = JSON.parse(await readFile(new URL(".vite/manifest.json", dist),
 const mainEntry = manifest["index.html"];
 const copyLinkEntry = manifest["src/client/copy-link.ts"];
 const previewEntry = manifest["src/preview/noctera-theme/client.ts"];
-if (!mainEntry?.css?.length || !copyLinkEntry || !previewEntry?.css?.length) throw new Error("Unexpected Vite manifest layout");
+const bentoEntry = manifest["src/preview/noctera-bento/bento.css"];
+if (!mainEntry?.css?.length || !copyLinkEntry || !previewEntry?.css?.length || !bentoEntry?.file.endsWith(".css")) {
+  throw new Error("Unexpected Vite manifest layout");
+}
 
 // Template: the built index.html minus the dev client bundle, with CSS inlined.
 let template = await readFile(new URL("index.html", dist), "utf8");
@@ -57,6 +60,7 @@ const scriptTags = {
 // Stylesheets that only some pages load (linked, so the shared inline CSS and its hash stay the same).
 const styleTags = {
   "preview-theme": previewEntry.css.map((f) => `<link rel="stylesheet" href="/${f}" />`).join("\n    "),
+  "preview-bento": `<link rel="stylesheet" href="/${bentoEntry.file}" />`,
 };
 
 const { renderPages, SITE_URL } = await import(new URL("entry-server.js", ssrDir).href);
@@ -64,7 +68,7 @@ const pages = renderPages((path) => existsSync(inDist(path)));
 
 const written = [];
 for (const page of pages) {
-  const scripts = page.scripts.map((name) => scriptTags[name]).join("");
+  const scripts = page.scripts.flatMap((name) => scriptTags[name] ?? []).join("");
   const styles = page.scripts.flatMap((name) => styleTags[name] ?? []).join("\n    ");
   const html = template
     .replace(/<html lang="[^"]*">/, `<html lang="${page.lang}">`)
