@@ -4,7 +4,7 @@ import { artistPlatforms } from "./platforms";
 import type { Artist, Release, SocialLink } from "./types";
 
 export { artists, releases };
-export { GOOGLE_SITE_VERIFICATION, LABEL_DESCRIPTION, labelLinks, SITE_URL } from "./label";
+export { GOOGLE_SITE_VERIFICATION, LABEL_DESCRIPTION, LABEL_LOGO, labelLinks, SITE_URL } from "./label";
 export { streamingPlatforms } from "./platforms";
 export type * from "./types";
 

@@ -1,4 +1,4 @@
-import { creditOf, streamingPlatforms, type Release, type SocialLink } from "../../data";
+import { creditOf, streamingPlatforms, type Release, type SocialLink } from "../data";
 import { Arrow, OutLink, SectionHead } from "./primitives";
 
 type Props = {

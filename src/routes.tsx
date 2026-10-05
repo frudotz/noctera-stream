@@ -21,15 +21,15 @@ import { ReleasePage } from "./pages/ReleasePage";
 import { ArtistPage } from "./pages/ArtistPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { PreviewPage } from "./preview/noctera-theme/PreviewPage";
-import { BentoPage } from "./preview/noctera-bento/BentoPage";
+import { MovedPage } from "./preview/noctera-bento/MovedPage";
 
 export type Page = {
   /** "/" or "/section/slug/"; written to <path>/index.html. The 404 page uses "/404.html". */
   path: string;
   meta: PageMeta;
   element: ReactElement;
-  /** Client scripts the page needs; everything else ships as plain HTML. */
-  scripts: ("copy-link" | "preview-theme" | "preview-bento")[];
+  /** Client assets the page needs ("home" is the homepage stylesheet); everything else ships as plain HTML. */
+  scripts: ("copy-link" | "home" | "preview-theme")[];
 };
 
 /** Preview image for a picture (its 1200 px share copy when there is one). */
@@ -83,25 +83,29 @@ function artistMeta(artist: Artist): PageMeta {
 
 export function getPages(): Page[] {
   const latest = getLatestRelease();
+  const homeTitle = "NOCTERA — Independent Music Label & Collective";
+  // What the homepage actually shows: the label, its releases and artists, where to listen — and the latest release.
+  const homeDescription = `${LABEL_DESCRIPTION} Releases, artists and where to listen — latest: “${latest.title}” by ${creditOf(latest)}.`;
+  const latestCover = latest.cover ? metaImage(latest.cover, coverAlt(latest)) : undefined;
 
   return [
     {
       path: "/",
       meta: {
-        title: "NOCTERA — Independent Music Label",
-        description: LABEL_DESCRIPTION,
+        title: homeTitle,
+        description: homeDescription,
         path: "/",
         lang: "en",
         type: "website",
         // A dedicated 1200×630 public/og-image.jpg wins when it exists; until then, the latest cover.
         images: [
           { src: "/og-image.jpg", width: 1200, height: 630, alt: "NOCTERA" },
-          ...(latest.cover ? [metaImage(latest.cover, coverAlt(latest))] : []),
+          ...(latestCover ? [latestCover] : []),
         ],
-        jsonLd: homeGraph(LABEL_DESCRIPTION, "en"),
+        jsonLd: homeGraph(homeTitle, homeDescription, "en", latestCover),
       },
       element: <HomePage />,
-      scripts: [],
+      scripts: ["home"],
     },
     ...releases.map((release) => ({
       path: releasePath(release),
@@ -146,21 +150,22 @@ export function getPages(): Page[] {
       element: <PreviewPage />,
       scripts: ["preview-theme"],
     },
-    // DESIGN PREVIEW of a second concept, "bento × neo-brutalist" (src/preview/noctera-bento/).
-    // Same rules: not linked, noindex, no canonical, not in the sitemap. Ships CSS only.
+    // The bento concept that previewed here is now the homepage. Old preview links
+    // are forwarded to / ; noindex and no canonical, so it never competes with it.
     {
       path: "/preview/noctera-bento/",
       meta: {
-        title: "Bento preview — NOCTERA",
-        description: "Design preview of a bento-grid NOCTERA homepage concept. Not the live site.",
+        title: "Moved — NOCTERA",
+        description: "This page has moved to the NOCTERA homepage.",
         path: "/preview/noctera-bento/",
         lang: "en",
         type: "website",
         images: [],
         noindex: true,
+        redirect: "/",
       },
-      element: <BentoPage />,
-      scripts: ["preview-bento"],
+      element: <MovedPage />,
+      scripts: [],
     },
   ];
 }

@@ -23,6 +23,8 @@ export type PageMeta = {
   /** Schema.org JSON-LD graph for this page. */
   jsonLd?: object[];
   noindex?: boolean;
+  /** Forward visitors to this root-relative URL at once (retired URLs; GitHub Pages has no server redirects). */
+  redirect?: string;
 };
 
 const LOCALES: Record<PageMeta["lang"], string> = { en: "en_US", tr: "tr_TR" };
@@ -75,6 +77,8 @@ export function renderHead(meta: PageMeta, image: MetaImage | undefined): string
   }
 
   if (meta.noindex) tags.push(["name", "robots", "noindex"]);
+  // An instant refresh is treated by search engines like a permanent redirect.
+  const refresh = meta.redirect ? `<meta http-equiv="refresh" content="0; url=${escape(meta.redirect)}" />` : "";
   if (GOOGLE_SITE_VERIFICATION && meta.path === "/") {
     tags.push(["name", "google-site-verification", GOOGLE_SITE_VERIFICATION]);
   }
@@ -86,6 +90,7 @@ export function renderHead(meta: PageMeta, image: MetaImage | undefined): string
 
   return [
     `<title>${escape(meta.title)}</title>`,
+    refresh,
     meta.noindex ? "" : `<link rel="canonical" href="${escape(url)}" />`,
     ...tags.map(([attr, key, value]) => `<meta ${attr}="${key}" content="${escape(value)}" />`),
     jsonLd,

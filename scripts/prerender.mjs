@@ -19,8 +19,8 @@ const manifest = JSON.parse(await readFile(new URL(".vite/manifest.json", dist),
 const mainEntry = manifest["index.html"];
 const copyLinkEntry = manifest["src/client/copy-link.ts"];
 const previewEntry = manifest["src/preview/noctera-theme/client.ts"];
-const bentoEntry = manifest["src/preview/noctera-bento/bento.css"];
-if (!mainEntry?.css?.length || !copyLinkEntry || !previewEntry?.css?.length || !bentoEntry?.file.endsWith(".css")) {
+const homeEntry = manifest["src/home/home.css"];
+if (!mainEntry?.css?.length || !copyLinkEntry || !previewEntry?.css?.length || !homeEntry?.file.endsWith(".css")) {
   throw new Error("Unexpected Vite manifest layout");
 }
 
@@ -60,7 +60,7 @@ const scriptTags = {
 // Stylesheets that only some pages load (linked, so the shared inline CSS and its hash stay the same).
 const styleTags = {
   "preview-theme": previewEntry.css.map((f) => `<link rel="stylesheet" href="/${f}" />`).join("\n    "),
-  "preview-bento": `<link rel="stylesheet" href="/${bentoEntry.file}" />`,
+  home: `<link rel="stylesheet" href="/${homeEntry.file}" />`,
 };
 
 const { renderPages, SITE_URL } = await import(new URL("entry-server.js", ssrDir).href);

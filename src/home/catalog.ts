@@ -1,4 +1,4 @@
-import { releases, type Release } from "../../data";
+import { releases, type Release } from "../data";
 
 /**
  * Index number of a release, counted from the first one (releases.ts is newest

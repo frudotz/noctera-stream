@@ -2,9 +2,11 @@ import type { SocialLink } from "./types";
 
 export const SITE_URL = "https://noctera.stream";
 
-/** Shown in search results and link previews for the homepage. */
-export const LABEL_DESCRIPTION =
-  "NOCTERA — independent music label and collective. Discover releases, artists and music from NOCTERA.";
+/** Who NOCTERA is, in one sentence: the Organization description, and the start of the homepage description. */
+export const LABEL_DESCRIPTION = "NOCTERA is an independent music label and collective.";
+
+/** NOCTERA's mark (the favicon's N) as a 512 px PNG, used as the Organization logo in structured data. */
+export const LABEL_LOGO = { src: "/assets/noctera-logo-512.png", width: 512, height: 512 };
 
 /**
  * Google Search Console "HTML tag" verification code (the content="…" value only).

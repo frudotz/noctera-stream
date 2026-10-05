@@ -1,4 +1,4 @@
-import { artistPath, type Artist } from "../../data";
+import { artistPath, type Artist } from "../data";
 import { Arrow, Img, SectionHead } from "./primitives";
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -31,11 +31,11 @@ export function Artists({ artists }: { artists: Artist[] }) {
         <ul className="nb-tiles" data-count={artists.length}>
           {artists.map((artist, i) => (
             <li key={artist.slug} className="nb-tile">
-              {/* Not linked a second time for keyboard users: the roster list already links each artist. */}
+              {/* Not a second tab stop: the roster list already links each artist. */}
               <a className="nb-tile__link" href={artistPath(artist)} tabIndex={-1} aria-hidden="true">
                 <span className="nb-tile__photo">
                   {artist.image ? (
-                    <Img picture={artist.image} alt="" sizes="(min-width: 1200px) 30vw, (min-width: 768px) 45vw, 50vw" />
+                    <Img picture={artist.image} alt={artist.image.alt} sizes="(min-width: 1200px) 30vw, (min-width: 768px) 45vw, 50vw" />
                   ) : (
                     <span className="nb-tile__initial">{artist.name.charAt(0)}</span>
                   )}

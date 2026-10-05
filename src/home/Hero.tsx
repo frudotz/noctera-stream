@@ -1,5 +1,5 @@
-import { coverAlt, creditOf, releasePath, releases, type Release } from "../../data";
-import { Artwork } from "../../components/Artwork";
+import { coverAlt, creditOf, releasePath, releases, type Release } from "../data";
+import { Artwork } from "../components/Artwork";
 import { Arrow, Img } from "./primitives";
 import { catalogNumber, indexOf, yearSpan } from "./catalog";
 
