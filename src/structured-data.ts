@@ -2,12 +2,15 @@
 // no genres, dates beyond the release year, ISRCs, durations or logos are invented.
 import {
   artistPath,
+  artists,
   artistsOf,
   LABEL_DESCRIPTION,
+  LABEL_LOGO,
   labelLinks,
   linksOf,
   peopleOf,
   releasePath,
+  releases,
   streamingPlatforms,
   type Artist,
   type Release,
@@ -31,7 +34,8 @@ function organization(full = false) {
   const node = { "@type": "Organization", "@id": ORG_ID, name: "NOCTERA", url: HOME };
   if (!full) return node;
   const sameAs = labelLinks.flatMap((link) => (link.url ? [link.url] : []));
-  return { ...node, description: LABEL_DESCRIPTION, ...(sameAs.length > 0 && { sameAs }) };
+  const logo = { "@type": "ImageObject", url: absolute(LABEL_LOGO.src), width: LABEL_LOGO.width, height: LABEL_LOGO.height };
+  return { ...node, description: LABEL_DESCRIPTION, logo, ...(sameAs.length > 0 && { sameAs }) };
 }
 
 const website = () => ({
@@ -65,19 +69,61 @@ function breadcrumbs(pageUrl: string, trail: { name: string; url: string }[]) {
   };
 }
 
-export function homeGraph(description: string, lang: string) {
+/**
+ * One release as MusicAlbum. The release page passes everything it shows; the homepage
+ * passes only what its rows and featured block show (cover and links for the latest).
+ */
+function musicAlbum(release: Release, { image, producers = [], links = false }: { image?: MetaImage; producers?: Artist[]; links?: boolean }) {
+  const credited = artistsOf(release);
+  const streaming = streamingPlatforms.flatMap(({ key }) => (release.links[key] ? [release.links[key]!] : []));
+  const releaseType = RELEASE_TYPES[release.type.toLowerCase()];
+
+  return {
+    "@type": "MusicAlbum",
+    "@id": releaseId(release),
+    name: release.title,
+    url: absolute(releasePath(release)),
+    datePublished: release.year,
+    ...(releaseType && { albumReleaseType: releaseType }),
+    byArtist: credited.map((a) => ({ "@id": personId(a) })),
+    ...(producers.length > 0 && { producer: producers.map((a) => ({ "@id": personId(a) })) }),
+    ...(image && { image: imageObject(image) }),
+    ...(links && streaming.length > 0 && { sameAs: streaming }),
+    albumRelease: {
+      "@type": "MusicRelease",
+      name: release.title,
+      datePublished: release.year,
+      recordLabel: { "@id": ORG_ID },
+      ...(streaming.length > 0 && { musicReleaseFormat: "https://schema.org/DigitalFormat" }),
+    },
+  };
+}
+
+/**
+ * Homepage: the label, plus what the page visibly presents — the roster (linked to
+ * each artist page) and the releases, the latest with its cover and streaming links.
+ * Same @ids as the artist and release pages, so each entity is described once.
+ */
+export function homeGraph(title: string, description: string, lang: string, latestCover?: MetaImage) {
+  const latest = releases.find((r) => r.latest) ?? releases[0];
+
   return [
     website(),
     organization(true),
+    ...artists.map((artist) => ({ ...personRef(artist), affiliation: { "@id": ORG_ID } })),
+    ...releases.map((release) =>
+      musicAlbum(release, release === latest ? { image: latestCover, links: true } : {}),
+    ),
     {
       "@type": "WebPage",
       "@id": `${HOME}#webpage`,
       url: HOME,
-      name: "NOCTERA — Independent Music Label",
+      name: title,
       description,
       inLanguage: lang,
       isPartOf: { "@id": SITE_ID },
       about: { "@id": ORG_ID },
+      ...(latestCover && { primaryImageOfPage: imageObject(latestCover) }),
     },
   ];
 }
@@ -123,32 +169,12 @@ export function releaseGraph(release: Release, title: string, lang: string, imag
   const producers = peopleOf(release)
     .filter(({ role }) => /producer/i.test(role))
     .map(({ artist }) => artist);
-  const streaming = streamingPlatforms.flatMap(({ key }) => (release.links[key] ? [release.links[key]!] : []));
-  const releaseType = RELEASE_TYPES[release.type.toLowerCase()];
 
   return [
     website(),
     organization(),
     ...[...credited, ...producers].map(personRef),
-    {
-      "@type": "MusicAlbum",
-      "@id": releaseId(release),
-      name: release.title,
-      url,
-      datePublished: release.year,
-      ...(releaseType && { albumReleaseType: releaseType }),
-      byArtist: credited.map((a) => ({ "@id": personId(a) })),
-      ...(producers.length > 0 && { producer: producers.map((a) => ({ "@id": personId(a) })) }),
-      ...(image && { image: imageObject(image) }),
-      ...(streaming.length > 0 && { sameAs: streaming }),
-      albumRelease: {
-        "@type": "MusicRelease",
-        name: release.title,
-        datePublished: release.year,
-        recordLabel: { "@id": ORG_ID },
-        ...(streaming.length > 0 && { musicReleaseFormat: "https://schema.org/DigitalFormat" }),
-      },
-    },
+    musicAlbum(release, { image, producers, links: true }),
     {
       "@type": "WebPage",
       "@id": `${url}#webpage`,

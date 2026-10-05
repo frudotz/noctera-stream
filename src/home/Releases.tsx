@@ -1,4 +1,4 @@
-import { creditOf, releasePath, type Release } from "../../data";
+import { creditOf, releasePath, type Release } from "../data";
 import { Arrow, SectionHead } from "./primitives";
 import { indexOf } from "./catalog";
 

@@ -1,7 +1,7 @@
 /*
- * DESIGN PREVIEW — NOCTERA "Bento × Neo-Brutalist" (/preview/noctera-bento/ only).
+ * Homepage — "bento × neo-brutalist" (src/pages/HomePage.tsx, src/home/).
  *
- * Loaded only on that page, after the production stylesheet (src/styles.css),
+ * Linked only on the homepage, after the shared stylesheet (src/styles.css),
  * whose self-hosted fonts and reset it reuses. Every class is prefixed "nb-".
  *
  * System: one 12-column grid (6 on tablet, 1 on phones). Blocks are outlined
@@ -114,7 +114,7 @@
   transition: transform var(--nb-t);
 }
 
-/* ---------- Skip link, preview notice ---------- */
+/* ---------- Skip link ---------- */
 
 .nb-skip {
   position: absolute;
@@ -131,23 +131,6 @@
 
 .nb-skip:focus-visible {
   transform: none;
-}
-
-.nb-notice {
-  padding: 8px var(--nb-margin);
-  border-bottom: 1px solid var(--nb-line);
-  font-family: var(--mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--nb-gray);
-}
-
-.nb-notice a {
-  margin-left: 12px;
-  color: var(--nb-ink);
-  text-decoration: underline;
-  text-underline-offset: 3px;
 }
 
 /* ---------- Header ---------- */
@@ -452,6 +435,9 @@
 }
 
 .nb-head__title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
   font-weight: 500;
   font-size: 1.5rem;
   line-height: 1;
@@ -459,8 +445,7 @@
 }
 
 .nb-head__title .nb-meta {
-  margin-right: 6px;
-  vertical-align: 0.35em;
+  align-self: center;
 }
 
 /* ---------- Releases: editorial rows ---------- */

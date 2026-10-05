@@ -23,10 +23,12 @@ Generated from the data on every build — no router, just HTML files:
 
 | URL | Source |
 | --- | --- |
-| `/` | the release marked `latest: true`, NOCTERA's links, all artists |
+| `/` | 12-column bento homepage (`src/pages/HomePage.tsx`, `src/home/`): the release marked `latest: true`, all releases, all artists, streaming and social links |
 | `/releases/<slug>/` | one page per entry in `src/data/releases.ts` |
 | `/artists/<slug>/` | one page per entry in `src/data/artists.ts` |
 | `/404.html`, `/sitemap.xml` | generated |
+| `/preview/noctera-theme/` | design preview of an alternative theme — `noindex`, not in the sitemap |
+| `/preview/noctera-bento/` | retired preview of the current homepage — `noindex`, forwards to `/` |
 
 Each page has its own title, description, canonical URL and Open Graph / X card tags (`src/routes.tsx`). Release pages use the cover artwork as their preview image; artist pages use the artist's image or, without one, their latest cover.
 
@@ -57,7 +59,7 @@ Add an entry at the top of `src/data/releases.ts`, move `latest: true` to it, an
 },
 ```
 
-Once there is more than one release, the homepage shows a "Selected releases" list; the release pages and artist pages update automatically.
+The homepage's "Releases" list, the release pages and the artist pages update automatically. Each release can also get an accent colour (used only for small details on the homepage) in `src/home/home.css`, keyed by its slug.
 
 ### Artists
 
@@ -82,7 +84,7 @@ To credit someone on a release without adding them to the credit line (e.g. a pr
 
 ### NOCTERA's accounts
 
-Edit `src/data/label.ts` (shown under "Follow" on the homepage).
+Edit `src/data/label.ts` (shown in the homepage header, "Listen" section and footer).
 
 ### Artwork
 
@@ -114,7 +116,7 @@ Generated for every page at build time (`src/routes.tsx`, `src/head.ts`, `src/st
 
 - **Title, description, canonical URL** — unique per page; artist descriptions come from each artist's `summary` in `src/data/artists.ts`.
 - **Open Graph and X cards** — compact `summary` card (small thumbnail beside the text) with the page's own image: the release cover on release pages, the artist photo on artist pages, and on the homepage `public/og-image.jpg` if it exists (1200×630), otherwise the latest cover.
-- **JSON-LD** — homepage: `WebSite` + `Organization` (NOCTERA, with its social profiles as `sameAs`); artist pages: `ProfilePage` + `Person` (affiliated with NOCTERA) + `BreadcrumbList`; release pages: `MusicAlbum` (credited artists as `byArtist`, producer contributors as `producer`, streaming links as `sameAs`) with a `MusicRelease` whose `recordLabel` is NOCTERA, + `BreadcrumbList`.
+- **JSON-LD** — homepage: `WebSite` + `Organization` (NOCTERA, with its logo `public/assets/noctera-logo-512.png` and its social profiles as `sameAs`) + what the page shows: each artist as a `Person` affiliated with NOCTERA, each release as a `MusicAlbum` (the latest with its cover and streaming links), using the same `@id`s as their own pages; artist pages: `ProfilePage` + `Person` (affiliated with NOCTERA) + `BreadcrumbList`; release pages: `MusicAlbum` (credited artists as `byArtist`, producer contributors as `producer`, streaming links as `sameAs`) with a `MusicRelease` whose `recordLabel` is NOCTERA, + `BreadcrumbList`.
 - **Language** — `<html lang>` follows the page's main content (`tr` on artist pages, whose biographies are Turkish; English interface text is marked `lang="en"`).
 - **sitemap.xml / robots.txt** — the sitemap lists every indexable page and is rebuilt on each build; `robots.txt` allows everything and points to it.
 - **Content-Security-Policy** — sent as a `<meta>` tag (GitHub Pages can't set response headers): same-origin only, no third-party requests.

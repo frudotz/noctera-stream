@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { Picture } from "../../data";
+import type { Picture } from "../data";
 
 type ImgProps = {
   picture: Picture;
@@ -54,9 +54,11 @@ type SectionHeadProps = {
 export function SectionHead({ number, id, title, aside }: SectionHeadProps) {
   return (
     <header className="nb-head">
-      <h2 id={id} className="nb-head__title">
-        <span className="nb-meta">{number} /</span> {title}
-      </h2>
+      {/* The section number is visual numbering, kept out of the heading text. */}
+      <div className="nb-head__title">
+        <span className="nb-meta" aria-hidden="true">{number} /</span>
+        <h2 id={id}>{title}</h2>
+      </div>
       {aside && <p className="nb-meta">{aside}</p>}
     </header>
   );
