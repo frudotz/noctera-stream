@@ -21,6 +21,7 @@ import { ReleasePage } from "./pages/ReleasePage";
 import { ArtistPage } from "./pages/ArtistPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { PreviewPage } from "./preview/noctera-theme/PreviewPage";
+import { BentoPage } from "./preview/noctera-bento/BentoPage";
 
 export type Page = {
   /** "/" or "/section/slug/"; written to <path>/index.html. The 404 page uses "/404.html". */
@@ -28,7 +29,7 @@ export type Page = {
   meta: PageMeta;
   element: ReactElement;
   /** Client scripts the page needs; everything else ships as plain HTML. */
-  scripts: ("copy-link" | "preview-theme")[];
+  scripts: ("copy-link" | "preview-theme" | "preview-bento")[];
 };
 
 /** Preview image for a picture (its 1200 px share copy when there is one). */
@@ -144,6 +145,22 @@ export function getPages(): Page[] {
       },
       element: <PreviewPage />,
       scripts: ["preview-theme"],
+    },
+    // DESIGN PREVIEW of a second concept, "bento × neo-brutalist" (src/preview/noctera-bento/).
+    // Same rules: not linked, noindex, no canonical, not in the sitemap. Ships CSS only.
+    {
+      path: "/preview/noctera-bento/",
+      meta: {
+        title: "Bento preview — NOCTERA",
+        description: "Design preview of a bento-grid NOCTERA homepage concept. Not the live site.",
+        path: "/preview/noctera-bento/",
+        lang: "en",
+        type: "website",
+        images: [],
+        noindex: true,
+      },
+      element: <BentoPage />,
+      scripts: ["preview-bento"],
     },
   ];
 }

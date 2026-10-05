@@ -18,6 +18,8 @@ export default defineConfig(({ isSsrBuild }) => ({
             "copy-link": "src/client/copy-link.ts",
             // Design preview only (/preview/noctera-theme/): its script and stylesheet.
             "preview-theme": "src/preview/noctera-theme/client.ts",
+            // Design preview only (/preview/noctera-bento/): a stylesheet, no script.
+            "preview-bento": "src/preview/noctera-bento/bento.css",
           },
         },
       },
