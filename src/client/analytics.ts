@@ -270,7 +270,12 @@ function startYandex(id: string) {
   });
 }
 
-/** GA4 custom events (GA4's own outbound-click tracking should be off — see the README). */
+/**
+ * GA4 custom events (GA4's own outbound-click tracking should be off — see the README).
+ * link_text / link_id / link_url / link_domain use GA4's standard parameter names, so they fill the
+ * predefined "Link …" dimensions. Only platform, source_page and destination_page are NOCTERA-specific
+ * and registered as event-scoped custom dimensions.
+ */
 function thirdPartyClick(internal: boolean, url: URL, text: string, linkId: string) {
   if (!gaReady || !w.gtag) return;
   if (internal) {
@@ -278,8 +283,8 @@ function thirdPartyClick(internal: boolean, url: URL, text: string, linkId: stri
   } else {
     w.gtag("event", "outbound_link_click", {
       source_page: location.pathname,
-      destination_domain: url.hostname.replace(/^www\./, ""),
-      destination_url: url.origin + url.pathname,
+      link_domain: url.hostname.replace(/^www\./, ""),
+      link_url: url.origin + url.pathname,
       link_text: text,
       platform: platformOf(url.hostname),
       link_id: linkId,
