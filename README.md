@@ -2,7 +2,7 @@
 
 Link page for NOCTERA — independent music label / collective. Used as the profile link on Instagram, TikTok, YouTube, Spotify and other platforms.
 
-Built with Vite, React and TypeScript. At build time every page is prerendered to static HTML with the CSS inlined. Pages ship almost no JavaScript: a 0.8 KB "Copy link" script on release pages and a ~3 KB (gzipped) analytics client that loads after the content (see [Analytics](#analytics)). Fonts are self-hosted; without GA4/Yandex IDs configured, the only request to another host is the first-party analytics beacon.
+Built with Vite, React and TypeScript. At build time every page is prerendered to static HTML with the CSS inlined. Pages ship almost no JavaScript: a 0.8 KB "Copy link" script on release pages and a ~3 KB (gzipped) analytics client that loads after the content (see [Analytics](#analytics)). Fonts are self-hosted; other hosts contacted are the first-party analytics collector and, after the page has loaded, Google Analytics 4 and Yandex Metrica.
 
 ## Development
 
@@ -146,7 +146,7 @@ The site sends lightweight analytics to NOCTERA's own collector at `https://anal
 
 ### Google Analytics 4 and Yandex Metrica (optional)
 
-Both are off until an ID is set. The IDs are public identifiers (every visitor's browser receives them), not secrets — but never use them to protect anything. Set them either in `src/data/analytics.ts`, or without a code change as repository **variables** (Settings → Secrets and variables → Actions → *Variables*): `GA4_MEASUREMENT_ID` (`G-…`) and `YANDEX_METRICA_ID` (digits). The build rejects malformed IDs and adds the providers' origins to the CSP automatically.
+Both are on: GA4 `G-S4DS8E043L` and Yandex Metrica `113473865` are set in `src/data/analytics.ts` (an empty value turns a provider off). The IDs are public identifiers (every visitor's browser receives them), not secrets — but never use them to protect anything. They can be changed in `src/data/analytics.ts`, or overridden without a code change by repository **variables** (Settings → Secrets and variables → Actions → *Variables*): `GA4_MEASUREMENT_ID` (`G-…`) and `YANDEX_METRICA_ID` (digits). The build rejects malformed IDs and adds the providers' origins to the CSP automatically.
 
 - **GA4:** page views, sessions, first visits, engagement and scrolls are recorded automatically by GA4. The client adds custom events `internal_link_click`, `outbound_link_click` (with `platform`) and `campaign_landing` (UTM landings). In GA4 → Admin → Data streams → Enhanced measurement, **turn off "Outbound clicks"** so outbound clicks aren't recorded twice (as GA4's `click` and as `outbound_link_click`). Google signals and ad personalization are disabled; query strings other than UTM parameters are removed from `page_location`.
 - **Yandex Metrica:** page views, sources, visits, link clicks (native `trackLinks`), click map and bounce accuracy. **Webvisor (session recording) is off** — see the privacy notes in `noctera-analytics` before switching `webvisor` on.

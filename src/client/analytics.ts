@@ -258,9 +258,10 @@ function startYandex(id: string) {
   stub.l = Date.now();
   const ym = w.ym || stub;
   w.ym = ym;
-  loadScript("https://mc.yandex.ru/metrika/tag.js");
+  loadScript(`https://mc.yandex.ru/metrika/tag.js?id=${encodeURIComponent(id)}`);
   // Native link tracking covers outbound clicks; no duplicate custom goals are sent.
   ym(Number(id), "init", {
+    ssr: true,
     clickmap: config.yandexMetrica.clickmap,
     trackLinks: true,
     accurateTrackBounce: true,
