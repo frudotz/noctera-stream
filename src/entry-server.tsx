@@ -1,9 +1,16 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { SITE_URL, validateData } from "./data";
+import { analyticsCsp, analyticsEnabled, validateAnalyticsConfig } from "./data/analytics";
 import { renderHead } from "./head";
 import { getPages } from "./routes";
 
 export { SITE_URL };
+
+/** Analytics settings for scripts/prerender.mjs: whether to add the client script, and extra CSP sources. */
+export function analyticsBuildConfig() {
+  validateAnalyticsConfig();
+  return { enabled: analyticsEnabled(), csp: analyticsCsp() };
+}
 
 /**
  * Every page of the site rendered to HTML (used by scripts/prerender.mjs).

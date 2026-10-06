@@ -1,8 +1,9 @@
 // Post-build step: turns the Vite build into a fully static multi-page site.
 //   1. renders every page (home, releases, artists, 404) from the SSR bundle in dist-ssr/
 //   2. inlines the stylesheet; drops the dev client bundle — pages are plain HTML
-//   3. adds the tiny copy-link script only to pages that use it
-//   4. adds a Content-Security-Policy (a <meta> tag — GitHub Pages can't send headers)
+//   3. adds the tiny copy-link script only to pages that use it, and the analytics client to every page
+//   4. adds a Content-Security-Policy (a <meta> tag — GitHub Pages can't send headers), widened only
+//      for the analytics providers enabled in src/data/analytics.ts
 //   5. writes sitemap.xml and copies CNAME so the custom domain survives deployment
 //   6. fails the build on missing local files or broken SEO basics (see audit below)
 import { copyFile, mkdir, readFile, rm, writeFile } from "node:fs/promises";
@@ -18,9 +19,10 @@ const inDist = (path) => fileURLToPath(new URL("." + decodeURI(path.split(/[?#]/
 const manifest = JSON.parse(await readFile(new URL(".vite/manifest.json", dist), "utf8"));
 const mainEntry = manifest["index.html"];
 const copyLinkEntry = manifest["src/client/copy-link.ts"];
+const analyticsEntry = manifest["src/client/analytics.ts"];
 const previewEntry = manifest["src/preview/noctera-theme/client.ts"];
 const homeEntry = manifest["src/home/home.css"];
-if (!mainEntry?.css?.length || !copyLinkEntry || !previewEntry?.css?.length || !homeEntry?.file.endsWith(".css")) {
+if (!mainEntry?.css?.length || !copyLinkEntry || !analyticsEntry || !previewEntry?.css?.length || !homeEntry?.file.endsWith(".css")) {
   throw new Error("Unexpected Vite manifest layout");
 }
 
@@ -35,15 +37,21 @@ if (template.includes(mainEntry.file) || !template.includes("<!--head-->") || !t
   throw new Error("index.html template is missing placeholders or still references the client bundle");
 }
 
-// Everything is same-origin; the one inline stylesheet is allowed by its hash.
-// (JSON-LD is data, not script, so CSP doesn't apply to it.)
+const { renderPages, SITE_URL, analyticsBuildConfig } = await import(new URL("entry-server.js", ssrDir).href);
+const analytics = analyticsBuildConfig();
+
+// Same-origin, plus only the origins of enabled analytics providers; the one inline stylesheet
+// is allowed by its hash. No inline scripts anywhere. (JSON-LD is data, not script, so CSP doesn't apply to it.)
 const styleHash = createHash("sha256").update(css, "utf8").digest("base64");
+const sources = (directive, ...own) => [...own, ...(analytics.csp[directive] ?? [])].join(" ");
 const csp = [
   "default-src 'self'",
-  "script-src 'self'",
+  `script-src ${sources("script-src", "'self'")}`,
   `style-src 'self' 'sha256-${styleHash}'`,
-  "img-src 'self'",
+  `img-src ${sources("img-src", "'self'")}`,
   "font-src 'self'",
+  `connect-src ${sources("connect-src", "'self'")}`,
+  ...(analytics.csp["frame-src"]?.length ? [`frame-src ${sources("frame-src")}`] : []),
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'none'",
@@ -55,6 +63,8 @@ template = template.replace(
 
 const scriptTags = {
   "copy-link": `<script type="module" src="/${copyLinkEntry.file}"></script>`,
+  // Module scripts never block rendering; the analytics client runs after the content is parsed.
+  analytics: `<script type="module" src="/${analyticsEntry.file}"></script>`,
   "preview-theme": `<script type="module" src="/${previewEntry.file}"></script>`,
 };
 // Stylesheets that only some pages load (linked, so the shared inline CSS and its hash stay the same).
@@ -63,12 +73,12 @@ const styleTags = {
   home: `<link rel="stylesheet" href="/${homeEntry.file}" />`,
 };
 
-const { renderPages, SITE_URL } = await import(new URL("entry-server.js", ssrDir).href);
 const pages = renderPages((path) => existsSync(inDist(path)));
 
 const written = [];
 for (const page of pages) {
-  const scripts = page.scripts.flatMap((name) => scriptTags[name] ?? []).join("");
+  const names = analytics.enabled ? [...page.scripts, "analytics"] : page.scripts;
+  const scripts = names.flatMap((name) => scriptTags[name] ?? []).join("");
   const styles = page.scripts.flatMap((name) => styleTags[name] ?? []).join("\n    ");
   const html = template
     .replace(/<html lang="[^"]*">/, `<html lang="${page.lang}">`)

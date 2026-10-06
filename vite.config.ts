@@ -16,6 +16,8 @@ export default defineConfig(({ isSsrBuild }) => ({
           input: {
             index: "index.html",
             "copy-link": "src/client/copy-link.ts",
+            // Analytics client (src/data/analytics.ts), on every page when a provider is enabled.
+            analytics: "src/client/analytics.ts",
             // Design preview only (/preview/noctera-theme/): its script and stylesheet.
             "preview-theme": "src/preview/noctera-theme/client.ts",
             // Homepage stylesheet, linked from / only.
