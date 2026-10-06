@@ -33,13 +33,13 @@ export const analytics = {
   heartbeatSeconds: 0,
 
   ga4: {
-    /** e.g. "G-ABC123XYZ". Empty = GA4 off. */
-    measurementId: (env.VITE_GA4_MEASUREMENT_ID as string | undefined) || "",
+    /** NOCTERA's GA4 web stream. A repository variable GA4_MEASUREMENT_ID overrides it; "" = GA4 off. */
+    measurementId: (env.VITE_GA4_MEASUREMENT_ID as string | undefined) || "G-S4DS8E043L",
   },
 
   yandexMetrica: {
-    /** e.g. "98765432". Empty = Yandex Metrica off. */
-    counterId: (env.VITE_YANDEX_METRICA_ID as string | undefined) || "",
+    /** NOCTERA's Metrica counter. A repository variable YANDEX_METRICA_ID overrides it; "" = Yandex Metrica off. */
+    counterId: (env.VITE_YANDEX_METRICA_ID as string | undefined) || "113473865",
     /** Click map (aggregated click positions). */
     clickmap: true,
     /**
