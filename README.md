@@ -2,7 +2,7 @@
 
 Link page for NOCTERA — independent music label / collective. Used as the profile link on Instagram, TikTok, YouTube, Spotify and other platforms.
 
-Built with Vite, React and TypeScript. At build time every page is prerendered to static HTML with the CSS inlined. Pages ship **no JavaScript**, except a 0.8 KB "Copy link" script on release pages. The site makes no third-party requests (fonts are self-hosted) and has no analytics or trackers.
+Built with Vite, React and TypeScript. At build time every page is prerendered to static HTML with the CSS inlined. Pages ship almost no JavaScript: a 0.8 KB "Copy link" script on release pages and a ~3 KB (gzipped) analytics client that loads after the content (see [Analytics](#analytics)). Fonts are self-hosted; without GA4/Yandex IDs configured, the only request to another host is the first-party analytics beacon.
 
 ## Development
 
@@ -119,7 +119,7 @@ Generated for every page at build time (`src/routes.tsx`, `src/head.ts`, `src/st
 - **JSON-LD** — homepage: `WebSite` + `Organization` (NOCTERA, with its logo `public/assets/noctera-logo-512.png` and its social profiles as `sameAs`) + what the page shows: each artist as a `Person` affiliated with NOCTERA, each release as a `MusicAlbum` (the latest with its cover and streaming links), using the same `@id`s as their own pages; artist pages: `ProfilePage` + `Person` (affiliated with NOCTERA) + `BreadcrumbList`; release pages: `MusicAlbum` (credited artists as `byArtist`, producer contributors as `producer`, streaming links as `sameAs`) with a `MusicRelease` whose `recordLabel` is NOCTERA, + `BreadcrumbList`.
 - **Language** — `<html lang>` follows the page's main content (`tr` on artist pages, whose biographies are Turkish; English interface text is marked `lang="en"`).
 - **sitemap.xml / robots.txt** — the sitemap lists every indexable page and is rebuilt on each build; `robots.txt` allows everything and points to it.
-- **Content-Security-Policy** — sent as a `<meta>` tag (GitHub Pages can't set response headers): same-origin only, no third-party requests.
+- **Content-Security-Policy** — sent as a `<meta>` tag (GitHub Pages can't set response headers): same-origin, plus only the origins of the analytics providers that are switched on (`src/data/analytics.ts`). No inline scripts.
 
 `npm run build` fails if a page has a missing or duplicate title/description, a wrong canonical URL, not exactly one `<h1>`, an image without `alt`, invalid JSON-LD, or a development URL.
 
@@ -128,6 +128,31 @@ Generated for every page at build time (`src/routes.tsx`, `src/head.ts`, `src/st
 1. Add a **Domain** property for `noctera.stream` and verify it with the DNS TXT record Google shows (added in Cloudflare) — nothing in the site needs to change.
    Alternatively, use a **URL prefix** property with the *HTML tag* method: paste the code into `GOOGLE_SITE_VERIFICATION` in `src/data/label.ts` and push.
 2. Submit `https://noctera.stream/sitemap.xml` under *Sitemaps*.
+
+## Analytics
+
+The site sends lightweight analytics to NOCTERA's own collector at `https://analytics.noctera.stream/collect`. The collector, database, private dashboard and reports live in a separate private repository (`noctera-analytics`); this repository only contains the browser side:
+
+| File | What it does |
+| --- | --- |
+| [`src/data/analytics.ts`](src/data/analytics.ts) | All analytics settings: collector URL, session timeout, GA4 Measurement ID, Yandex Metrica counter ID, Webvisor switch. Also validates the IDs and lists the CSP origins each provider needs. |
+| [`src/client/analytics.ts`](src/client/analytics.ts) | The client (≈3 KB gzipped, no dependencies), added to every page by `scripts/prerender.mjs` as a `type="module"` script — it never blocks rendering. |
+
+**What it records (first-party):** pageviews (page, title, previous page), clicks on internal links and outbound links (Spotify, YouTube, Instagram…), and how long the page was visible. Each browser gets a random visitor ID and a random session ID (30-minute inactivity timeout) in `localStorage`. The referrer is reduced to its scheme and host before it leaves the browser; UTM parameters are read from the landing URL. No cookies, IP addresses, fingerprints, form contents or session recordings. Requests use `fetch(…, { keepalive: true })`, or `navigator.sendBeacon()` while the page is being hidden or closed.
+
+**Failure-safe:** everything is wrapped so that errors are swallowed; if the collector is down or blocked, the site behaves exactly the same. Analytics runs only on `noctera.stream` / `www.noctera.stream` — never on `localhost` or `npm run preview`.
+
+**Excluding yourself:** open any page with `?analytics=off` to stop analytics in that browser (`?analytics=on` to undo).
+
+### Google Analytics 4 and Yandex Metrica (optional)
+
+Both are off until an ID is set. The IDs are public identifiers (every visitor's browser receives them), not secrets — but never use them to protect anything. Set them either in `src/data/analytics.ts`, or without a code change as repository **variables** (Settings → Secrets and variables → Actions → *Variables*): `GA4_MEASUREMENT_ID` (`G-…`) and `YANDEX_METRICA_ID` (digits). The build rejects malformed IDs and adds the providers' origins to the CSP automatically.
+
+- **GA4:** page views, sessions, first visits, engagement and scrolls are recorded automatically by GA4. The client adds custom events `internal_link_click`, `outbound_link_click` (with `platform`) and `campaign_landing` (UTM landings). In GA4 → Admin → Data streams → Enhanced measurement, **turn off "Outbound clicks"** so outbound clicks aren't recorded twice (as GA4's `click` and as `outbound_link_click`). Google signals and ad personalization are disabled; query strings other than UTM parameters are removed from `page_location`.
+- **Yandex Metrica:** page views, sources, visits, link clicks (native `trackLinks`), click map and bounce accuracy. **Webvisor (session recording) is off** — see the privacy notes in `noctera-analytics` before switching `webvisor` on.
+- Browsers sending Global Privacy Control get no GA4 or Yandex Metrica.
+
+The numbers in GA4, Yandex Metrica and NOCTERA's own dashboard will not match exactly (ad blockers, cookies, session and attribution rules, bot filtering, reporting delays).
 
 ## Deployment (GitHub Pages)
 
