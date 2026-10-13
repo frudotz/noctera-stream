@@ -52,7 +52,7 @@ export const artists: Artist[] = [
     bioLang: "tr",
     role: "",
     summary:
-      "RATH (Yusuf Çon); prodüktör, aranjör, söz yazarı ve besteci. BOEM ile “Bi Düş Ver” projesinde söz yazarı, ortak prodüktör ve mix-mastering mühendisi olarak yer aldı.",
+      "RATH (Yusuf Salih Çon); prodüktör, aranjör, söz yazarı ve besteci. BOEM ile “Bi Düş Ver” projesinde söz yazarı, ortak prodüktör ve mix-mastering mühendisi olarak yer aldı.",
     image: photo("rath.jpeg", 3000, "RATH — NOCTERA artist"),
     links: {
       instagram: "https://www.instagram.com/yslhc0/",
