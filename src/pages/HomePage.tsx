@@ -22,7 +22,7 @@ export function HomePage() {
         <h1 className="nb-wordmark">NOCTERA</h1>
         <nav className="nb-nav" aria-label="Sections">
           <a href="#releases">Releases</a>
-          <a href="#artists">Artists</a>
+          <a href="#artists">Crew</a>
           <a href="#listen">Listen</a>
         </nav>
         {instagram && (

@@ -49,6 +49,12 @@ export type Release = {
   artists: string[];
   /** How the artists are credited, e.g. "BOEM & RATH". Defaults to the names joined with " & ". */
   credit?: string;
+  /**
+   * Credited artists (slugs from `artists`) who appear as featured guests, e.g. RATH on a BOEM single.
+   * The release is listed under "Featured on" on their profile instead of "Releases"; it stays in
+   * `artists` and in the credit line. At least one credited artist must not be featured.
+   */
+  featured?: string[];
   /** Other roster members who worked on the release (not part of the credit line). */
   contributors?: { artist: string; role: string }[];
   type: string;
