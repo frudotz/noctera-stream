@@ -1,4 +1,4 @@
-import { creditOf, releasePath, type Release } from "../data";
+import { creditOf, formatDate, releasePath, type Release } from "../data";
 import { Arrow, SectionHead } from "./primitives";
 import { indexOf } from "./catalog";
 
@@ -21,7 +21,7 @@ export function Releases({ releases }: { releases: Release[] }) {
               <span className="nb-row__title" lang={release.titleLang}>{release.title}</span>
               <span className="nb-row__credit">{creditOf(release)}</span>
               <span className="nb-row__meta nb-meta">
-                <span>{release.year}</span>
+                <time dateTime={release.releaseDate}>{formatDate(release.releaseDate)}</time>
                 <span>{release.type}</span>
               </span>
               <span className="nb-row__go">

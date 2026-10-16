@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { creditOf, releasePath, SITE_URL, type Release } from "../data";
+import { creditOf, formatDate, releasePath, SITE_URL, type Release } from "../data";
 import { Artwork } from "./Artwork";
 import { CopyLink } from "./CopyLink";
 import { PlatformLinks } from "./PlatformLinks";
@@ -41,7 +41,8 @@ export function ReleaseCard({ release, eyebrow, headingLevel, linkTitle = false,
           </hgroup>
           <div className="release__meta">
             <p className="label">
-              {type} <span aria-hidden="true">·</span> {year}
+              {type} <span aria-hidden="true">·</span>{" "}
+              <time dateTime={release.releaseDate}>{formatDate(release.releaseDate)}</time>
             </p>
             {showCopyLink && <CopyLink url={SITE_URL + releasePath(release)} />}
           </div>

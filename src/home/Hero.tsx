@@ -1,4 +1,4 @@
-import { coverAlt, creditOf, releasePath, releases, type Release } from "../data";
+import { coverAlt, creditOf, formatDate, releasePath, releases, type Release } from "../data";
 import { Artwork } from "../components/Artwork";
 import { Arrow, Img } from "./primitives";
 import { catalogNumber, indexOf, yearSpan } from "./catalog";
@@ -28,8 +28,8 @@ export function Hero({ release }: { release: Release }) {
 
           <dl className="nb-latest__facts">
             <div>
-              <dt className="nb-meta">Year</dt>
-              <dd>{release.year}</dd>
+              <dt className="nb-meta">Released</dt>
+              <dd><time dateTime={release.releaseDate}>{formatDate(release.releaseDate)}</time></dd>
             </div>
             <div>
               <dt className="nb-meta">Format</dt>

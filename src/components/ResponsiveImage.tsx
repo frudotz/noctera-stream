@@ -7,7 +7,9 @@ type Props = {
 
 /** The original image plus its smaller copies; the browser picks the smallest sharp-enough file. */
 export function ResponsiveImage({ picture, alt }: Props) {
+  // A variant as wide as the original (art smaller than 1200 px) replaces it: srcset widths must be unique.
   const srcSet = [...(picture.variants ?? []), picture]
+    .filter((image, i, all) => all.findIndex((other) => other.width === image.width) === i)
     .map(({ src, width }) => `${src} ${width}w`)
     .join(", ");
 

@@ -38,7 +38,7 @@ All content lives in [`src/data/`](src/data/). A `null` link means "not publishe
 
 ### A new release
 
-Add an entry at the top of `src/data/releases.ts`, move `latest: true` to it, and remove `latest` from the previous one:
+Add an entry at the top of `src/data/releases.ts`, move `latest: true` to it, and remove `latest` from the previous one. The list is newest first by `releaseDate`; releases sharing a date keep their order in the file (the first one counts as the newer, and is the one to mark `latest`). The build fails if dates are out of order, malformed, or don't match `year`:
 
 ```ts
 {
@@ -49,6 +49,7 @@ Add an entry at the top of `src/data/releases.ts`, move `latest: true` to it, an
   credit: "BOEM",                // optional; defaults to the names joined with " & "
   type: "Single",
   year: "2026",
+  releaseDate: "2026-10-16",     // YYYY-MM-DD; shown as "16 Oct 2026" and used as datePublished
   latest: true,
   cover: { /* see Artwork */ },
   links: {
@@ -89,7 +90,7 @@ Edit `src/data/label.ts` (shown in the homepage header, "Listen" section and foo
 ### Artwork
 
 1. Put the original square artwork in `public/assets/`, with a URL-safe file name (e.g. `public/assets/new-single-cover.png`).
-2. Add smaller copies of the same image: 640 px and 1200 px WebP so phones don't download the original, and a 1200 px JPEG for social previews.
+2. Add smaller copies of the same image: 640 px and 1200 px WebP so phones don't download the original, and a 1200 px JPEG for social previews. If the original is smaller than 1200 px, make those copies at its own size instead of upscaling (e.g. `-1024.webp` / `-1024.jpg`).
 3. Set `cover` on the release:
 
    ```ts

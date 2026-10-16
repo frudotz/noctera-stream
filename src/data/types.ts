@@ -51,6 +51,8 @@ export type Release = {
   contributors?: { artist: string; role: string }[];
   type: string;
   year: string;
+  /** Release day as a calendar date, "YYYY-MM-DD" (no time or time zone, so it never shifts). Its year must match `year`. */
+  releaseDate: string;
   /** null shows the neutral placeholder. */
   cover: Cover | null;
   links: Record<StreamingPlatform, Url>;

@@ -1,4 +1,4 @@
-import { creditOf, releasePath, roleOn, type Artist, type Release } from "../data";
+import { creditOf, formatDate, releasePath, roleOn, type Artist, type Release } from "../data";
 import { Arrow } from "./Arrow";
 import { Band } from "./Band";
 import { useUiLang } from "./UiLang";
@@ -29,7 +29,8 @@ export function ReleaseList({ heading, releases, artist }: Props) {
                   <span className="row__title" lang={release.titleLang}>{release.title}</span>
                   <span className="row__meta" lang={uiLang}>
                     {creditOf(release)} <span aria-hidden="true">·</span> {release.type}{" "}
-                    <span aria-hidden="true">·</span> {release.year}
+                    <span aria-hidden="true">·</span>{" "}
+                    <time dateTime={release.releaseDate}>{formatDate(release.releaseDate)}</time>
                   </span>
                   {role && <span className="row__meta row__meta--role" lang={uiLang}>{role}</span>}
                 </span>

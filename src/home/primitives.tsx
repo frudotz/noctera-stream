@@ -11,7 +11,11 @@ type ImgProps = {
 
 /** The production image set (original + -640/-1200 copies) with per-slot sizes and lazy loading. */
 export function Img({ picture, alt, sizes, priority = false }: ImgProps) {
-  const srcSet = [...(picture.variants ?? []), picture].map(({ src, width }) => `${src} ${width}w`).join(", ");
+  // A variant as wide as the original (art smaller than 1200 px) replaces it: srcset widths must be unique.
+  const srcSet = [...(picture.variants ?? []), picture]
+    .filter((image, i, all) => all.findIndex((other) => other.width === image.width) === i)
+    .map(({ src, width }) => `${src} ${width}w`)
+    .join(", ");
 
   return (
     <img
