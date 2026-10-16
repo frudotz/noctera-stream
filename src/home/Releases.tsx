@@ -1,6 +1,6 @@
-import { creditOf, releasePath, type Release } from "../data";
+import { creditOf, formatDate, releasePath, type Release } from "../data";
 import { Arrow, SectionHead } from "./primitives";
-import { indexOf } from "./catalog";
+import { catalogIndex } from "./catalog";
 
 /** The catalogue as an editorial list (2 / 4 / 3 / 2 / 1 columns), one row per release. */
 export function Releases({ releases }: { releases: Release[] }) {
@@ -17,11 +17,11 @@ export function Releases({ releases }: { releases: Release[] }) {
         {releases.map((release) => (
           <li key={release.slug}>
             <a className="nb-row" href={releasePath(release)}>
-              <span className="nb-row__no nb-mono">{indexOf(release)}</span>
+              <span className="nb-row__no nb-mono">{catalogIndex(release)}</span>
               <span className="nb-row__title" lang={release.titleLang}>{release.title}</span>
               <span className="nb-row__credit">{creditOf(release)}</span>
               <span className="nb-row__meta nb-meta">
-                <span>{release.year}</span>
+                <time dateTime={release.releaseDate}>{formatDate(release.releaseDate)}</time>
                 <span>{release.type}</span>
               </span>
               <span className="nb-row__go">

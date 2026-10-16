@@ -1,5 +1,5 @@
 // Schema.org JSON-LD for each page type. Only facts already in src/data are used:
-// no genres, dates beyond the release year, ISRCs, durations or logos are invented.
+// no genres, times beyond the release date, ISRCs, durations or logos are invented.
 import {
   artistPath,
   artists,
@@ -83,7 +83,7 @@ function musicAlbum(release: Release, { image, producers = [], links = false }: 
     "@id": releaseId(release),
     name: release.title,
     url: absolute(releasePath(release)),
-    datePublished: release.year,
+    datePublished: release.releaseDate,
     ...(releaseType && { albumReleaseType: releaseType }),
     byArtist: credited.map((a) => ({ "@id": personId(a) })),
     ...(producers.length > 0 && { producer: producers.map((a) => ({ "@id": personId(a) })) }),
@@ -92,7 +92,7 @@ function musicAlbum(release: Release, { image, producers = [], links = false }: 
     albumRelease: {
       "@type": "MusicRelease",
       name: release.title,
-      datePublished: release.year,
+      datePublished: release.releaseDate,
       recordLabel: { "@id": ORG_ID },
       ...(streaming.length > 0 && { musicReleaseFormat: "https://schema.org/DigitalFormat" }),
     },

@@ -52,6 +52,14 @@ export function getLatestRelease(): Release {
   return releases.find((r) => r.latest) ?? releases[0];
 }
 
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** "2026-10-16" → "16 Oct 2026". Read from the string itself, never via Date, so no time zone can shift the day. */
+export function formatDate(isoDate: string): string {
+  const [year, month, day] = isoDate.split("-").map(Number);
+  return `${day} ${MONTHS[month - 1]} ${year}`;
+}
+
 /** An artist's published links, in display order. Several accounts on one platform are told apart by handle. */
 export function linksOf(artist: Artist): (SocialLink & { url: string })[] {
   return artistPlatforms.flatMap(({ key, label }) => {
@@ -80,6 +88,31 @@ export function validateData() {
     }
   }
   releases.forEach(peopleOf);
+
+  for (const [i, release] of releases.entries()) {
+    const { slug: s, releaseDate: date } = release;
+    const [y, m, d] = date.split("-").map(Number);
+    const real = new Date(Date.UTC(y, m - 1, d));
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || real.getUTCMonth() !== m - 1 || real.getUTCDate() !== d) {
+      throw new Error(`Release "${s}" has an invalid releaseDate "${date}" (use YYYY-MM-DD)`);
+    }
+    if (date.slice(0, 4) !== release.year) throw new Error(`Release "${s}": year ${release.year} doesn't match releaseDate ${date}`);
+    if (i > 0 && date > releases[i - 1].releaseDate) {
+      throw new Error(`releases.ts must be newest first: "${s}" (${date}) is listed after "${releases[i - 1].slug}"`);
+    }
+  }
+  // The homepage Hero must feature the release at the top of the catalogue.
+  const latest = releases.find((r) => r.latest);
+  if (latest && latest !== releases[0]) {
+    throw new Error(`"${latest.slug}" is marked latest but "${releases[0].slug}" is listed first`);
+  }
+
+  const numbers = new Set<string>();
+  for (const { slug: s, catalogNumber: n } of releases) {
+    if (!/^NOCTERA-\d{3}$/.test(n)) throw new Error(`Release "${s}" has an invalid catalogNumber "${n}" (use NOCTERA-000)`);
+    if (numbers.has(n)) throw new Error(`Duplicate catalogNumber "${n}"`);
+    numbers.add(n);
+  }
 
   for (const artist of artists) {
     if (!artist.name) throw new Error(`Artist "${artist.slug}" has no name (check its bio file)`);

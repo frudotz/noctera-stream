@@ -1,7 +1,7 @@
-import { coverAlt, creditOf, releasePath, releases, type Release } from "../data";
+import { coverAlt, creditOf, formatDate, releasePath, releases, type Release } from "../data";
 import { Artwork } from "../components/Artwork";
 import { Arrow, Img } from "./primitives";
-import { catalogNumber, indexOf, yearSpan } from "./catalog";
+import { releaseCount, yearSpan } from "./catalog";
 
 /**
  * The 7 / 3 / 2 opening row: latest release, NOCTERA identity, release index.
@@ -28,8 +28,8 @@ export function Hero({ release }: { release: Release }) {
 
           <dl className="nb-latest__facts">
             <div>
-              <dt className="nb-meta">Year</dt>
-              <dd>{release.year}</dd>
+              <dt className="nb-meta">Released</dt>
+              <dd><time dateTime={release.releaseDate}>{formatDate(release.releaseDate)}</time></dd>
             </div>
             <div>
               <dt className="nb-meta">Format</dt>
@@ -37,7 +37,7 @@ export function Hero({ release }: { release: Release }) {
             </div>
             <div>
               <dt className="nb-meta">Index</dt>
-              <dd className="nb-mono">{catalogNumber(release)}</dd>
+              <dd className="nb-mono">{release.catalogNumber}</dd>
             </div>
           </dl>
 
@@ -81,7 +81,7 @@ export function Hero({ release }: { release: Release }) {
 
       {/* 2 columns — the catalogue, as a printed index reference */}
       <a className="nb-block nb-index" href="#releases" aria-label={`Release index: ${releases.length} ${releases.length === 1 ? "release" : "releases"}, ${yearSpan()}`}>
-        <span className="nb-index__no">{indexOf(releases[0])}</span>
+        <span className="nb-index__no">{releaseCount()}</span>
         <span className="nb-index__label">
           NOCTERA
           <br />
