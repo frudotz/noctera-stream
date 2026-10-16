@@ -1,4 +1,4 @@
-import { linksOf, releasesBy, type Artist } from "../data";
+import { linksOf, profileSectionsOf, type Artist } from "../data";
 import { Layout } from "../components/Layout";
 import { ReleaseList } from "../components/ReleaseList";
 import { LinkRows } from "../components/LinkRows";
@@ -48,7 +48,9 @@ export function ArtistPage({ artist }: Props) {
           {intro}
         </article>
       )}
-      <ReleaseList heading="Releases" releases={releasesBy(artist)} artist={artist} />
+      {profileSectionsOf(artist).map(({ section, heading, releases }) => (
+        <ReleaseList key={section} heading={heading} releases={releases} artist={artist} />
+      ))}
       <LinkRows heading="Follow" owner={name} links={linksOf(artist)} />
     </Layout>
   );

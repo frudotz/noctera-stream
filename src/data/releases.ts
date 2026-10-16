@@ -6,6 +6,8 @@ import type { Release } from "./types";
  * newer one); the build fails if the dates are out of order.
  * `catalogNumber` is permanent: it never changes when releases are added or reordered.
  * Mark the first one with `latest: true` to feature it on the homepage.
+ * `featured` lists credited guests (e.g. RATH on BOEM's singles): the release shows under
+ * "Featured on" on their profile, and under "Releases" for the other credited artists.
  * Links set to null are listed as "Soon".
  */
 export const releases: Release[] = [
@@ -16,6 +18,7 @@ export const releases: Release[] = [
     titleLang: "tr",
     artists: ["boem", "rath"],
     credit: "BOEM & RATH",
+    featured: ["rath"],
     contributors: [{ artist: "siara", role: "Main Producer / Executive Producer" }],
     type: "Single",
     year: "2026",
@@ -47,6 +50,7 @@ export const releases: Release[] = [
     titleLang: "tr",
     artists: ["boem", "rath"],
     credit: "BOEM & RATH",
+    featured: ["rath"],
     contributors: [{ artist: "siara", role: "Main Producer / Executive Producer" }],
     type: "Single",
     year: "2026",
@@ -107,6 +111,7 @@ export const releases: Release[] = [
     titleLang: "tr",
     artists: ["boem", "rath"],
     credit: "BOEM & RATH",
+    featured: ["rath"],
     contributors: [{ artist: "siara", role: "Main Producer / Executive Producer" }],
     type: "Single",
     year: "2026",

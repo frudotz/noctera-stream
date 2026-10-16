@@ -43,6 +43,33 @@ export function releasesBy(artist: Artist): Release[] {
   return releases.filter((r) => peopleOf(r).some((p) => p.artist.slug === artist.slug));
 }
 
+/** Where a release is listed on an artist's profile. */
+export type ProfileSection = "releases" | "featured" | "works";
+
+/**
+ * The profile section a release belongs to for an artist, or null when they aren't on it:
+ * a credited artist's own release → "releases", a featured guest → "featured", a contributor
+ * only (e.g. producer) → "works". Each release gets one section, so it is never listed twice.
+ */
+export function profileSectionOf(release: Release, artist: Artist): ProfileSection | null {
+  if (release.artists.includes(artist.slug)) return release.featured?.includes(artist.slug) ? "featured" : "releases";
+  if (release.contributors?.some((c) => c.artist === artist.slug)) return "works";
+  return null;
+}
+
+const profileHeadings: Record<ProfileSection, string> = { releases: "Releases", featured: "Featured on", works: "Works" };
+
+/** An artist's profile sections in display order, each in catalogue order (newest first); empty ones are left out. */
+export function profileSectionsOf(artist: Artist): { section: ProfileSection; heading: string; releases: Release[] }[] {
+  return (Object.keys(profileHeadings) as ProfileSection[])
+    .map((section) => ({
+      section,
+      heading: profileHeadings[section],
+      releases: releases.filter((r) => profileSectionOf(r, artist) === section),
+    }))
+    .filter((s) => s.releases.length > 0);
+}
+
 /** The artist's contributor role on a release ("" when they're a credited artist). */
 export function roleOn(release: Release, artist: Artist): string {
   return release.contributors?.find((c) => c.artist === artist.slug)?.role ?? "";
@@ -88,6 +115,13 @@ export function validateData() {
     }
   }
   releases.forEach(peopleOf);
+  for (const { slug: s, artists: credited, featured = [] } of releases) {
+    for (const guest of featured) {
+      if (!credited.includes(guest)) throw new Error(`Release "${s}": featured artist "${guest}" must also be in artists`);
+    }
+    if (new Set(featured).size !== featured.length) throw new Error(`Release "${s}" lists a featured artist twice`);
+    if (featured.length >= credited.length) throw new Error(`Release "${s}": at least one credited artist must not be featured`);
+  }
 
   for (const [i, release] of releases.entries()) {
     const { slug: s, releaseDate: date } = release;

@@ -3,6 +3,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  # Pull requests run the same checks (typecheck, build, tests) but never deploy.
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -11,7 +14,8 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  # Deploys share one group; each pull request gets its own, so a PR check never cancels a deploy.
+  group: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.ref) || 'pages' }}
   cancel-in-progress: true
 
 jobs:
@@ -24,18 +28,23 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm run typecheck
       - run: npm run build
         env:
           # Optional public analytics IDs from Settings → Secrets and variables → Actions → *Variables*
           # (not secrets: they are public client-side identifiers). Empty = provider off.
           VITE_GA4_MEASUREMENT_ID: ${{ vars.GA4_MEASUREMENT_ID }}
           VITE_YANDEX_METRICA_ID: ${{ vars.YANDEX_METRICA_ID }}
-      - uses: actions/upload-pages-artifact@v3
+      # Checks the prerendered dist/, so it runs after the build; a failure stops the deploy.
+      - run: npm test
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
   deploy:
     needs: build
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

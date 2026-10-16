@@ -9,7 +9,7 @@ export function Artists({ artists }: { artists: Artist[] }) {
 
   return (
     <section id="artists" className="nb-section" aria-labelledby="nb-artists-title">
-      <SectionHead number="03" id="nb-artists-title" title="Artists" aside={`${pad(artists.length)} on the roster`} />
+      <SectionHead number="03" id="nb-artists-title" title="Crew" aside={`${pad(artists.length)} on the roster`} />
 
       <div className="nb-artists">
         <div className="nb-block nb-roster">

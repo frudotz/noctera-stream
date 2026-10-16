@@ -84,6 +84,12 @@ Photos go in `public/assets/artists/` — the original plus `-640.webp`, `-1200.
 
 To credit someone on a release without adding them to the credit line (e.g. a producer), use `contributors` on the release: `contributors: [{ artist: "siara", role: "Main Producer / Executive Producer" }]`. The release then appears on their artist page with that role.
 
+Each artist page lists a release in exactly one section, in this order (empty sections are hidden; each is newest first, in catalogue order):
+
+- **Releases** — releases where they are a credited artist and not a featured guest.
+- **Featured on** — releases that list them in `featured`. Use it for a guest on another artist's release: `artists: ["boem", "rath"], featured: ["rath"]` keeps the credit line "BOEM & RATH" but shows the release under BOEM's Releases and RATH's Featured on. A featured artist must also be in `artists`, and at least one credited artist must not be featured.
+- **Works** — releases they only worked on as a `contributor` (e.g. production), shown with their role. A contributor is never listed as a featured artist.
+
 ### NOCTERA's accounts
 
 Edit `src/data/label.ts` (shown in the homepage header, "Listen" section and footer).
