@@ -38,11 +38,12 @@ All content lives in [`src/data/`](src/data/). A `null` link means "not publishe
 
 ### A new release
 
-Add an entry at the top of `src/data/releases.ts`, move `latest: true` to it, and remove `latest` from the previous one. The list is newest first by `releaseDate`; releases sharing a date keep their order in the file (the first one counts as the newer, and is the one to mark `latest`). The build fails if dates are out of order, malformed, or don't match `year`:
+Add an entry at the top of `src/data/releases.ts`, move `latest: true` to it, and remove `latest` from the previous one. The list is newest first by `releaseDate`; releases sharing a date keep their order in the file (the first one counts as the newer). Only the first entry may be marked `latest`. Give the release the next unused `catalogNumber`; it is permanent and never changes when releases are added or reordered. The build fails if dates are out of order, malformed, or don't match `year`, if `latest` isn't on the first entry, or if a catalogue number is malformed or used twice:
 
 ```ts
 {
   slug: "new-single",            // → https://noctera.stream/releases/new-single/
+  catalogNumber: "NOCTERA-005",  // permanent; shown on the homepage
   title: "New Single",
   titleLang: "tr",               // language of the title, for screen readers
   artists: ["boem"],             // slugs from artists.ts, in credit order

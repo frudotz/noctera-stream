@@ -4,41 +4,14 @@ import type { Release } from "./types";
  * All releases, newest first by `releaseDate`. Each one gets a page at /releases/<slug>/.
  * Releases that share a date keep the order they have here (the one listed first is the
  * newer one); the build fails if the dates are out of order.
- * Mark the one to feature on the homepage with `latest: true`.
+ * `catalogNumber` is permanent: it never changes when releases are added or reordered.
+ * Mark the first one with `latest: true` to feature it on the homepage.
  * Links set to null are listed as "Soon".
  */
 export const releases: Release[] = [
   {
-    slug: "kor-duygular",
-    title: "Kör Duygular",
-    titleLang: "tr",
-    artists: ["boem", "rath"],
-    credit: "BOEM & RATH",
-    type: "Single",
-    year: "2026",
-    releaseDate: "2026-10-16",
-    latest: true,
-    cover: {
-      src: "/assets/kor-duygular-cover.png",
-      width: 2040,
-      variants: [
-        { src: "/assets/kor-duygular-cover-640.webp", width: 640 },
-        { src: "/assets/kor-duygular-cover-1200.webp", width: 1200 },
-      ],
-      share: { src: "/assets/kor-duygular-cover-1200.jpg", width: 1200 },
-    },
-    links: {
-      spotify: "https://open.spotify.com/intl-tr/track/6curNqlKH2iF0tkDIcNY7e",
-      appleMusic: "https://music.apple.com/tr/song/k%C3%B6r-duygular-feat-rath/6823731189",
-      youtubeMusic: "https://music.youtube.com/watch?v=5yWB0_cgzt0",
-      youtube: "https://www.youtube.com/watch?v=5yWB0_cgzt0",
-      soundcloud: null,
-      deezer: null,
-      amazonMusic: null,
-    },
-  },
-  {
     slug: "sevgi-ve-inanc",
+    catalogNumber: "NOCTERA-004",
     title: "Sevgi ve İnanç",
     titleLang: "tr",
     artists: ["boem", "rath"],
@@ -46,6 +19,7 @@ export const releases: Release[] = [
     type: "Single",
     year: "2026",
     releaseDate: "2026-10-16",
+    latest: true,
     cover: {
       src: "/assets/sevgi-ve-inanc-cover.png",
       width: 2000,
@@ -66,7 +40,37 @@ export const releases: Release[] = [
     },
   },
   {
+    slug: "kor-duygular",
+    catalogNumber: "NOCTERA-003",
+    title: "Kör Duygular",
+    titleLang: "tr",
+    artists: ["boem", "rath"],
+    credit: "BOEM & RATH",
+    type: "Single",
+    year: "2026",
+    releaseDate: "2026-10-16",
+    cover: {
+      src: "/assets/kor-duygular-cover.png",
+      width: 2040,
+      variants: [
+        { src: "/assets/kor-duygular-cover-640.webp", width: 640 },
+        { src: "/assets/kor-duygular-cover-1200.webp", width: 1200 },
+      ],
+      share: { src: "/assets/kor-duygular-cover-1200.jpg", width: 1200 },
+    },
+    links: {
+      spotify: "https://open.spotify.com/intl-tr/track/6curNqlKH2iF0tkDIcNY7e",
+      appleMusic: "https://music.apple.com/tr/song/k%C3%B6r-duygular-feat-rath/6823731189",
+      youtubeMusic: "https://music.youtube.com/watch?v=5yWB0_cgzt0",
+      youtube: "https://www.youtube.com/watch?v=5yWB0_cgzt0",
+      soundcloud: null,
+      deezer: null,
+      amazonMusic: null,
+    },
+  },
+  {
     slug: "karanligi-ben-secmedim",
+    catalogNumber: "NOCTERA-002",
     title: "Karanlığı Ben Seçmedim",
     titleLang: "tr",
     artists: ["rath"],
@@ -95,6 +99,7 @@ export const releases: Release[] = [
   },
   {
     slug: "bi-dus-ver",
+    catalogNumber: "NOCTERA-001",
     title: "Bi' Düş Ver",
     titleLang: "tr",
     artists: ["boem", "rath"],

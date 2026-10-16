@@ -40,6 +40,8 @@ export type ArtistPlatform =
 export type Release = {
   /** URL segment: /releases/<slug>/ */
   slug: string;
+  /** Permanent catalogue number, e.g. "NOCTERA-004". Assigned once; never derived from list order or `latest`. */
+  catalogNumber: string;
   title: string;
   /** BCP 47 language of the title, so screen readers pronounce it correctly. */
   titleLang?: string;

@@ -101,9 +101,17 @@ export function validateData() {
       throw new Error(`releases.ts must be newest first: "${s}" (${date}) is listed after "${releases[i - 1].slug}"`);
     }
   }
+  // The homepage Hero must feature the release at the top of the catalogue.
   const latest = releases.find((r) => r.latest);
-  if (latest && latest.releaseDate !== releases[0].releaseDate) {
-    throw new Error(`"${latest.slug}" is marked latest but "${releases[0].slug}" is newer`);
+  if (latest && latest !== releases[0]) {
+    throw new Error(`"${latest.slug}" is marked latest but "${releases[0].slug}" is listed first`);
+  }
+
+  const numbers = new Set<string>();
+  for (const { slug: s, catalogNumber: n } of releases) {
+    if (!/^NOCTERA-\d{3}$/.test(n)) throw new Error(`Release "${s}" has an invalid catalogNumber "${n}" (use NOCTERA-000)`);
+    if (numbers.has(n)) throw new Error(`Duplicate catalogNumber "${n}"`);
+    numbers.add(n);
   }
 
   for (const artist of artists) {

@@ -1,15 +1,12 @@
 import { releases, type Release } from "../data";
 
-/**
- * Index number of a release, counted from the first one (releases.ts is newest
- * first). Derived from release order, not an official catalogue number — replace
- * with a real field if NOCTERA starts assigning them.
- */
-export function indexOf(release: Release): string {
-  return String(releases.length - releases.indexOf(release)).padStart(3, "0");
+/** "004" for NOCTERA-004: the number part of a release's permanent catalogue number. */
+export function catalogIndex(release: Release): string {
+  return release.catalogNumber.slice(release.catalogNumber.lastIndexOf("-") + 1);
 }
 
-export const catalogNumber = (release: Release) => `NOCTERA-${indexOf(release)}`;
+/** Number of releases, padded like a catalogue number ("004"), for the release index block. */
+export const releaseCount = () => String(releases.length).padStart(3, "0");
 
 /** "2026", or "2024–2026" once releases span several years. */
 export function yearSpan(): string {
